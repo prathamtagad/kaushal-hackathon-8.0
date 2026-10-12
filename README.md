@@ -1,4 +1,4 @@
-# CAMPUSMIND (BACHAT!!) — AI-Powered Counterfactual Campus Digital Twin
+# BACHAT!! — AI-Powered Counterfactual Campus Digital Twin
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](#)
 [![Tests](https://img.shields.io/badge/pytest-9%20passed-success)](#)
