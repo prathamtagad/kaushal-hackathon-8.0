@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { LedgerMetrics, LedgerHistoryPoint } from '../types';
-import { Zap, IndianRupee, Leaf, Droplet, ArrowDownRight, RotateCcw, TrendingDown } from 'lucide-react';
+import { Zap, IndianRupee, Leaf, Droplet, ArrowDownRight, RotateCcw, TrendingDown, Info, ShieldCheck } from 'lucide-react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, ReferenceLine, CartesianGrid } from 'recharts';
 import { NeoCard } from './ui/NeoCard';
 import { NeoButton } from './ui/NeoButton';
@@ -41,17 +41,17 @@ export const LedgerPanel: React.FC<LedgerPanelProps> = ({
       .catch(() => {});
   }, [metrics.kwh_saved]);
 
-  const chartData = history.slice(-24).map(point => ({
+  const chartData = history.slice(-28).map(point => ({
     ...point,
     displayTime: point.time ? point.time.substring(11, 16) : ''
   }));
 
   return (
     <NeoCard
-      title="IMPACT LEDGER"
-      subtitle="LIVE COUNTERFACTUAL"
+      title="IMPACT LEDGER & COUNTERFACTUAL AUDIT"
+      subtitle="REAL-TIME METRICS VS UNMANAGED BASELINE"
       headerColor="mint"
-      tag="SAVINGS"
+      tag="MEASURED IMPACT"
       tagColor="yellow"
       icon={<TrendingDown className="w-5 h-5 text-black" />}
       headerAction={
@@ -59,145 +59,155 @@ export const LedgerPanel: React.FC<LedgerPanelProps> = ({
           size="sm"
           variant="white"
           onClick={onReset}
-          className="text-[10px] px-2 py-0.5 flex items-center space-x-1"
-          title="Reset cumulative counters"
+          className="text-[10px] px-2.5 py-1 flex items-center space-x-1"
+          title="Reset cumulative metrics"
         >
           <RotateCcw className="w-3 h-3 text-black" />
           <span>RESET</span>
         </NeoButton>
       }
       className="h-full"
-      bodyClassName="p-3 flex flex-col justify-between"
+      bodyClassName="p-3 sm:p-4 flex flex-col justify-between space-y-4"
     >
-      {/* 5 Giant Counter Tiles in Different Accent Colors with Space Mono count-up and uppercase label stickers */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 mb-3">
-        {/* Tile 1: Energy Saved (Yellow) */}
-        <div className="bg-[#FFD60A] text-black border-[3px] border-black rounded-[4px] p-2.5 shadow-[4px_4px_0_#000] flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-[9px] font-mono font-bold uppercase bg-black text-[#FFD60A] px-1.5 py-0.5 rounded-[2px]">
-              ENERGY
-            </span>
-            <Zap className="w-3.5 h-3.5 text-black" />
-          </div>
-          <div className="my-1.5">
-            <div className="text-xl sm:text-2xl font-extrabold font-mono tracking-tight leading-none">
-              <CountUpNumber value={metrics.kwh_saved} />
+      {/* Spacious 5-Metric Responsive Grid: never cramped or clipped */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
+        {/* Metric 1: Financial Savings */}
+        <div className="bg-[#06D6A0] text-black border-[3px] border-black rounded-[4px] p-3 shadow-[4px_4px_0_#000] flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[10px] font-mono font-extrabold uppercase bg-black text-[#06D6A0] px-1.5 py-0.5 rounded-[2px]">
+                COST SAVED
+              </span>
+              <IndianRupee className="w-4 h-4 text-black" />
             </div>
-            <div className="text-[9px] font-mono font-bold mt-0.5">kWh SAVED</div>
-          </div>
-          <div className="text-[8px] font-mono bg-white/70 border border-black px-1 py-0.5 rounded-[2px]">
-            {confidence.kwhRange} p10-p90
-          </div>
-        </div>
-
-        {/* Tile 2: Tariff Saved (Mint) */}
-        <div className="bg-[#06D6A0] text-black border-[3px] border-black rounded-[4px] p-2.5 shadow-[4px_4px_0_#000] flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-[9px] font-mono font-bold uppercase bg-black text-[#06D6A0] px-1.5 py-0.5 rounded-[2px]">
-              TARIFF
-            </span>
-            <IndianRupee className="w-3.5 h-3.5 text-black" />
-          </div>
-          <div className="my-1.5">
-            <div className="text-xl sm:text-2xl font-extrabold font-mono tracking-tight leading-none">
+            <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight my-1 text-black">
               <CountUpNumber value={metrics.inr_saved} prefix="₹" />
             </div>
-            <div className="text-[9px] font-mono font-bold mt-0.5">INR SAVED</div>
+            <div className="text-[10px] font-mono font-bold text-black uppercase">
+              TARIFF AVOIDED
+            </div>
           </div>
-          <div className="text-[8px] font-mono bg-white/70 border border-black px-1 py-0.5 rounded-[2px]">
-            {confidence.inrRange} proj.
+          <div className="mt-2 pt-1.5 border-t border-black/40 text-[9px] font-mono text-black/90">
+            {confidence.inrRange} projected • off-peak shift
           </div>
         </div>
 
-        {/* Tile 3: CO2 Avoided (Pink) */}
-        <div className="bg-[#FF4D8D] text-black border-[3px] border-black rounded-[4px] p-2.5 shadow-[4px_4px_0_#000] flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-[9px] font-mono font-bold uppercase bg-black text-[#FF4D8D] px-1.5 py-0.5 rounded-[2px]">
-              CARBON
-            </span>
-            <Leaf className="w-3.5 h-3.5 text-black" />
-          </div>
-          <div className="my-1.5">
-            <div className="text-xl sm:text-2xl font-extrabold font-mono tracking-tight leading-none">
-              <CountUpNumber value={metrics.co2_kg_saved} />
+        {/* Metric 2: Energy Conservation */}
+        <div className="bg-[#FFD60A] text-black border-[3px] border-black rounded-[4px] p-3 shadow-[4px_4px_0_#000] flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[10px] font-mono font-extrabold uppercase bg-black text-[#FFD60A] px-1.5 py-0.5 rounded-[2px]">
+                ENERGY
+              </span>
+              <Zap className="w-4 h-4 text-black" />
             </div>
-            <div className="text-[9px] font-mono font-bold mt-0.5">kg CO₂ CUT</div>
+            <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight my-1 text-black">
+              <CountUpNumber value={metrics.kwh_saved} /> <span className="text-sm font-bold">kWh</span>
+            </div>
+            <div className="text-[10px] font-mono font-bold text-black uppercase">
+              NET GRID ELECTRICITY
+            </div>
           </div>
-          <div className="text-[8px] font-mono bg-white/70 border border-black px-1 py-0.5 rounded-[2px]">
-            @ 0.82 kg/kWh
+          <div className="mt-2 pt-1.5 border-t border-black/40 text-[9px] font-mono text-black/90">
+            {confidence.kwhRange} p10-p90 • rebound accounted
           </div>
         </div>
 
-        {/* Tile 4: Water Saved (Electric Blue) */}
-        <div className="bg-[#3A86FF] text-white border-[3px] border-black rounded-[4px] p-2.5 shadow-[4px_4px_0_#000] flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-[9px] font-mono font-bold uppercase bg-black text-white px-1.5 py-0.5 rounded-[2px]">
-              WATER
-            </span>
-            <Droplet className="w-3.5 h-3.5 text-white" />
-          </div>
-          <div className="my-1.5">
-            <div className="text-xl sm:text-2xl font-extrabold font-mono tracking-tight leading-none">
-              <CountUpNumber value={metrics.litres_saved} />
+        {/* Metric 3: Carbon Avoidance */}
+        <div className="bg-[#FF4D8D] text-black border-[3px] border-black rounded-[4px] p-3 shadow-[4px_4px_0_#000] flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[10px] font-mono font-extrabold uppercase bg-black text-[#FF4D8D] px-1.5 py-0.5 rounded-[2px]">
+                CARBON
+              </span>
+              <Leaf className="w-4 h-4 text-black" />
             </div>
-            <div className="text-[9px] font-mono font-bold mt-0.5 text-white">LITRES WATER</div>
+            <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight my-1 text-black">
+              <CountUpNumber value={metrics.co2_kg_saved} /> <span className="text-sm font-bold">kg</span>
+            </div>
+            <div className="text-[10px] font-mono font-bold text-black uppercase">
+              CO₂ EMISSIONS CUT
+            </div>
           </div>
-          <div className="text-[8px] font-mono bg-white/20 border border-black px-1 py-0.5 rounded-[2px] text-white">
-            leak isolation
+          <div className="mt-2 pt-1.5 border-t border-black/40 text-[9px] font-mono text-black/90">
+            @ 0.82 kg CO₂/kWh India Grid Factor
           </div>
         </div>
 
-        {/* Tile 5: Peak Shaved (Lilac) */}
-        <div className="col-span-2 sm:col-span-1 bg-[#B388FF] text-black border-[3px] border-black rounded-[4px] p-2.5 shadow-[4px_4px_0_#000] flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-[9px] font-mono font-bold uppercase bg-black text-[#B388FF] px-1.5 py-0.5 rounded-[2px]">
-              PEAK
-            </span>
-            <ArrowDownRight className="w-3.5 h-3.5 text-black" />
-          </div>
-          <div className="my-1.5">
-            <div className="text-xl sm:text-2xl font-extrabold font-mono tracking-tight leading-none">
-              <CountUpNumber value={metrics.peak_kw_reduced} decimals={1} />
+        {/* Metric 4: Water Conservation */}
+        <div className="bg-[#3A86FF] text-white border-[3px] border-black rounded-[4px] p-3 shadow-[4px_4px_0_#000] flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[10px] font-mono font-extrabold uppercase bg-black text-white px-1.5 py-0.5 rounded-[2px]">
+                WATER
+              </span>
+              <Droplet className="w-4 h-4 text-white" />
             </div>
-            <div className="text-[9px] font-mono font-bold mt-0.5">kW SHAVED</div>
+            <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight my-1 text-white">
+              <CountUpNumber value={metrics.litres_saved} /> <span className="text-sm font-bold text-white">L</span>
+            </div>
+            <div className="text-[10px] font-mono font-bold text-white uppercase">
+              POTABLE WATER SAVED
+            </div>
           </div>
-          <div className="text-[8px] font-mono bg-white/70 border border-black px-1 py-0.5 rounded-[2px]">
-            vs baseline max
+          <div className="mt-2 pt-1.5 border-t border-white/40 text-[9px] font-mono text-white/90">
+            Leak detection & pipe isolation
+          </div>
+        </div>
+
+        {/* Metric 5: Peak Demand Reduction */}
+        <div className="bg-[#B388FF] text-black border-[3px] border-black rounded-[4px] p-3 shadow-[4px_4px_0_#000] flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[10px] font-mono font-extrabold uppercase bg-black text-[#B388FF] px-1.5 py-0.5 rounded-[2px]">
+                PEAK SHAVED
+              </span>
+              <ArrowDownRight className="w-4 h-4 text-black" />
+            </div>
+            <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight my-1 text-black">
+              <CountUpNumber value={metrics.peak_kw_reduced} decimals={1} /> <span className="text-sm font-bold">kW</span>
+            </div>
+            <div className="text-[10px] font-mono font-bold text-black uppercase">
+              MAX DEMAND REDUCED
+            </div>
+          </div>
+          <div className="mt-2 pt-1.5 border-t border-black/40 text-[9px] font-mono text-black/90">
+            vs 850 kW Contract Demand Limit
           </div>
         </div>
       </div>
 
-      {/* Chart: thick black axes, 4px lines (baseline = pink, managed = mint), grid cap as dashed red line with a CAP sticker */}
-      <div className="flex-1 w-full min-h-[220px] bg-white border-[3px] border-black rounded-[4px] shadow-[4px_4px_0_#000] p-3 flex flex-col">
-        <div className="flex flex-wrap items-center justify-between text-xs pb-2 mb-2 border-b-2 border-black font-['Space_Grotesk',sans-serif]">
-          <span className="font-extrabold uppercase tracking-tight text-xs">
-            GRID IMPORT: BASELINE vs MANAGED
-          </span>
-          <div className="flex items-center space-x-2 text-[10px] font-mono font-bold">
-            <span className="inline-flex items-center space-x-1 bg-[#FF4D8D] text-black px-1.5 py-0.5 rounded-[2px] border border-black">
-              <span>BASELINE</span>
+      {/* Counterfactual Comparison Chart: Full width, clean axes and legends */}
+      <div className="w-full bg-white border-[3px] border-black rounded-[4px] shadow-[4px_4px_0_#000] p-3 sm:p-4 flex flex-col">
+        <div className="flex flex-wrap items-center justify-between pb-2.5 mb-2.5 border-b-2 border-black font-['Space_Grotesk',sans-serif] gap-2">
+          <div>
+            <span className="font-extrabold uppercase text-xs sm:text-sm tracking-tight">
+              GRID IMPORT DYNAMICS: BASELINE (RED) vs MANAGED (GREEN)
             </span>
-            <span className="inline-flex items-center space-x-1 bg-[#06D6A0] text-black px-1.5 py-0.5 rounded-[2px] border border-black">
-              <span>MANAGED</span>
+            <div className="text-[10px] font-mono text-neutral-600 mt-0.5">
+              Simulated twin timelines under identical weather, solar irradiance & student occupancy
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 text-[10px] font-mono font-bold">
+            <span className="inline-flex items-center space-x-1 bg-[#FF4D8D] text-black px-2 py-0.5 rounded-[2px] border border-black shadow-[1px_1px_0_#000]">
+              <span>UNMANAGED BASELINE</span>
             </span>
-            <span className="inline-flex items-center space-x-1 bg-[#FF3B30] text-white px-1.5 py-0.5 rounded-[2px] border border-black">
-              <span>CAP {gridCapKw}kW</span>
+            <span className="inline-flex items-center space-x-1 bg-[#06D6A0] text-black px-2 py-0.5 rounded-[2px] border border-black shadow-[1px_1px_0_#000]">
+              <span>MANAGED TWIN</span>
+            </span>
+            <span className="inline-flex items-center space-x-1 bg-[#FF3B30] text-white px-2 py-0.5 rounded-[2px] border border-black shadow-[1px_1px_0_#000]">
+              <span>GRID CAP ({gridCapKw} kW)</span>
             </span>
           </div>
         </div>
 
-        <div className="flex-1 w-full min-h-[160px]">
+        <div className="w-full h-56 sm:h-64">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData} margin={{ top: 12, right: 18, left: -15, bottom: 0 }}>
-              <defs>
-                {/* Flat hatched pattern for chart background */}
-                <pattern id="chartHatch" width="10" height="10" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
-                  <line x1="0" y1="0" x2="0" y2="10" stroke="#000000" strokeWidth="0.8" opacity="0.1" />
-                </pattern>
-              </defs>
-              <CartesianGrid stroke="#000000" strokeDasharray="3 3" opacity={0.2} vertical={false} />
+            <LineChart data={chartData} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
+              <CartesianGrid stroke="#000000" strokeDasharray="3 3" opacity={0.15} vertical={false} />
               <XAxis dataKey="displayTime" stroke="#000000" strokeWidth={2} fontSize={10} fontFamily="Space Mono" tickLine={true} />
-              <YAxis stroke="#000000" strokeWidth={2} fontSize={10} fontFamily="Space Mono" tickLine={true} domain={[0, 'dataMax + 100']} />
+              <YAxis stroke="#000000" strokeWidth={2} fontSize={10} fontFamily="Space Mono" tickLine={true} domain={[0, 'dataMax + 80']} />
               <Tooltip
                 contentStyle={{
                   backgroundColor: '#FFD60A',
@@ -212,7 +222,7 @@ export const LedgerPanel: React.FC<LedgerPanelProps> = ({
                 }}
                 formatter={(val: any, name: any) => [
                   `${val} kW`,
-                  name === 'baseline_import_kw' ? 'Baseline Import' : 'Managed Import'
+                  name === 'baseline_import_kw' ? 'Baseline (Unmanaged)' : 'Managed (Agent Swarm)'
                 ]}
               />
               <ReferenceLine
@@ -221,17 +231,14 @@ export const LedgerPanel: React.FC<LedgerPanelProps> = ({
                 strokeWidth={3}
                 strokeDasharray="6 4"
                 label={{
-                  value: `CAP ${gridCapKw}kW`,
-                  fill: '#FFFFFF',
+                  value: `CONTRACT CAP ${gridCapKw}kW`,
+                  fill: '#FF3B30',
                   fontSize: 10,
                   fontFamily: 'Space Mono',
                   fontWeight: 'bold',
-                  position: 'insideTopRight',
-                  offset: 5,
-                  className: 'bg-black px-1 border border-black'
+                  position: 'insideTopRight'
                 }}
               />
-              {/* Baseline 4px Line (Pink) */}
               <Line
                 type="monotone"
                 dataKey="baseline_import_kw"
@@ -240,7 +247,6 @@ export const LedgerPanel: React.FC<LedgerPanelProps> = ({
                 dot={false}
                 isAnimationActive={false}
               />
-              {/* Managed 4px Line (Mint) */}
               <Line
                 type="monotone"
                 dataKey="managed_import_kw"

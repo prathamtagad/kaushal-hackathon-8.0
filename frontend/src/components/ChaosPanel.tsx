@@ -1,7 +1,8 @@
 import React from 'react';
-import { Flame, GraduationCap, ZapOff, Droplets, Ghost, RotateCcw, AlertTriangle } from 'lucide-react';
+import { Flame, GraduationCap, ZapOff, Droplets, Ghost, RotateCcw, AlertTriangle, Check, ShieldAlert } from 'lucide-react';
 import { NeoCard } from './ui/NeoCard';
 import { NeoBadge } from './ui/NeoBadge';
+import { NeoButton } from './ui/NeoButton';
 
 interface ChaosPanelProps {
   activeScenarios: string[];
@@ -11,173 +12,178 @@ interface ChaosPanelProps {
 export const ChaosPanel: React.FC<ChaosPanelProps> = ({ activeScenarios, onTrigger }) => {
   const isScenarioActive = (type: string) => activeScenarios.includes(type);
 
+  const scenarios = [
+    {
+      id: 'heatwave',
+      title: 'HEATWAVE INJECTION',
+      badge: '+8°C AMBIENT SPIKE',
+      color: 'bg-[#FF7B00]',
+      textColor: 'text-black',
+      icon: Flame,
+      category: 'WEATHER & GRID',
+      description: 'Pushes outdoor temperature +8°C for 6 hours. HVAC demand surges across all 4 zones, pushing baseline net import 8–15% over the 850 kW cap.',
+      expected: 'Triggers Grid Agent "peak" Ask → Multi-agent shed negotiations.'
+    },
+    {
+      id: 'exam_week',
+      title: 'EXAM WEEK SCHEDULE',
+      badge: 'STRICT COMFORT FLOORS',
+      color: 'bg-[#3A86FF]',
+      textColor: 'text-white',
+      icon: GraduationCap,
+      category: 'CAMPUS CALENDAR',
+      description: 'Hostel and Library night occupancy surges. Stricter comfort floors are enforced: reading halls cannot exceed 27°C and tank reserve rises to 40%.',
+      expected: 'Zone agents raise comfort weights (w=2.8), pushing solver to shed elsewhere.'
+    },
+    {
+      id: 'grid_outage',
+      title: 'SUBSTATION OUTAGE',
+      badge: 'CAP CUT TO 340 kW (40%)',
+      color: 'bg-black',
+      textColor: 'text-[#FFD60A]',
+      icon: ZapOff,
+      category: 'GRID EMERGENCY',
+      description: 'Simulates a major feeder transformer failure. Sanctioned grid cap drops by 60% for 3 hours. Campus must run primarily on rooftop solar + deep shedding.',
+      expected: 'Triggers "outage" Ask with emergency maximum shedding.'
+    },
+    {
+      id: 'tank_leak',
+      title: 'WATER TANK PIPE LEAK',
+      badge: '6 kL/h UNMETERED LOSS',
+      color: 'bg-[#06D6A0]',
+      textColor: 'text-black',
+      icon: Droplets,
+      category: 'INFRASTRUCTURE LEAK',
+      description: 'Simulates an unobserved 6 kL/h underground pipe breach. The water residual detection algorithm identifies the anomalous drop within 3 ticks.',
+      expected: 'Emits Critical Anomaly → Water Agent proposes valve branch isolation.'
+    },
+    {
+      id: 'phantom_load',
+      title: 'PHANTOM LOAD ANOMALY',
+      badge: '35 kW STUCK AC/LIGHTS',
+      color: 'bg-[#B388FF]',
+      textColor: 'text-black',
+      icon: Ghost,
+      category: 'ENERGY WASTE',
+      description: 'Labs and auditorium lighting & AC remain energized during zero-occupancy night hours. IsolationForest flags the anomalous consumption.',
+      expected: 'Emits Anomaly → Auto-generates single-zone waste fix deal.'
+    }
+  ];
+
   return (
     <NeoCard
-      title="CHAOS INJECTIONS & SCENARIOS"
-      subtitle="LIVE STRESS TEST GENERATOR"
+      title="CHAOS INJECTIONS & SCENARIO LAB"
+      subtitle="LIVE STRESS TESTING ENGINE — SIMULATED UNEXPECTED CRISES"
       headerColor="orange"
       tag={activeScenarios.length > 0 ? `${activeScenarios.length} ACTIVE` : 'READY'}
-      tagColor={activeScenarios.length > 0 ? 'red' : 'black'}
+      tagColor={activeScenarios.length > 0 ? 'red' : 'mint'}
       icon={<AlertTriangle className="w-5 h-5 text-black" />}
-      bodyClassName="p-3"
-    >
-      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
-        {/* 1. Heatwave (Orange) */}
-        <div className={isScenarioActive('heatwave') ? 'striped-warning-tape rounded-[6px]' : ''}>
-          <button
-            onClick={() => onTrigger('heatwave')}
-            className={`w-full h-full p-3 border-[3px] border-black rounded-[4px] font-['Space_Grotesk',sans-serif] text-left transition-all duration-100 flex flex-col justify-between select-none ${
-              isScenarioActive('heatwave')
-                ? 'bg-[#FF7B00] text-black translate-x-[4px] translate-y-[4px] shadow-[2px_2px_0_#000]'
-                : 'bg-[#FF7B00] text-black shadow-[4px_4px_0_#000] hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[8px_8px_0_#000] active:translate-x-[4px] active:translate-y-[4px] active:shadow-[2px_2px_0_#000]'
-            }`}
-          >
-            <div className="flex items-center justify-between mb-2">
-              <div className="w-8 h-8 rounded-[3px] bg-black text-[#FF7B00] border-2 border-black flex items-center justify-center">
-                <Flame className="w-5 h-5" />
-              </div>
-              <NeoBadge variant={isScenarioActive('heatwave') ? 'black' : 'white'} tilt="right">
-                {isScenarioActive('heatwave') ? 'ACTIVE' : '+8°C'}
-              </NeoBadge>
-            </div>
-            <div>
-              <div className="font-extrabold text-sm uppercase tracking-tight">HEATWAVE</div>
-              <div className="text-[10px] font-mono font-bold uppercase mt-0.5 opacity-90">
-                +8°C NEXT 6 HOURS
-              </div>
-            </div>
-          </button>
-        </div>
-
-        {/* 2. Exam Week (Electric Blue) */}
-        <div className={isScenarioActive('exam_week') ? 'striped-warning-tape rounded-[6px]' : ''}>
-          <button
-            onClick={() => onTrigger('exam_week')}
-            className={`w-full h-full p-3 border-[3px] border-black rounded-[4px] font-['Space_Grotesk',sans-serif] text-left transition-all duration-100 flex flex-col justify-between select-none ${
-              isScenarioActive('exam_week')
-                ? 'bg-[#3A86FF] text-white translate-x-[4px] translate-y-[4px] shadow-[2px_2px_0_#000]'
-                : 'bg-[#3A86FF] text-white shadow-[4px_4px_0_#000] hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[8px_8px_0_#000] active:translate-x-[4px] active:translate-y-[4px] active:shadow-[2px_2px_0_#000]'
-            }`}
-          >
-            <div className="flex items-center justify-between mb-2">
-              <div className="w-8 h-8 rounded-[3px] bg-black text-[#3A86FF] border-2 border-black flex items-center justify-center">
-                <GraduationCap className="w-5 h-5 text-white" />
-              </div>
-              <NeoBadge variant={isScenarioActive('exam_week') ? 'yellow' : 'white'} tilt="left">
-                {isScenarioActive('exam_week') ? 'ACTIVE' : 'TIGHT'}
-              </NeoBadge>
-            </div>
-            <div>
-              <div className="font-extrabold text-sm uppercase tracking-tight">EXAM WEEK</div>
-              <div className="text-[10px] font-mono font-bold uppercase mt-0.5 opacity-90">
-                LOCKED COMFORT BAND
-              </div>
-            </div>
-          </button>
-        </div>
-
-        {/* 3. Grid Outage (Black with Yellow Text) */}
-        <div className={isScenarioActive('grid_outage') ? 'striped-warning-tape rounded-[6px]' : ''}>
-          <button
-            onClick={() => onTrigger('grid_outage')}
-            className={`w-full h-full p-3 border-[3px] border-black rounded-[4px] font-['Space_Grotesk',sans-serif] text-left transition-all duration-100 flex flex-col justify-between select-none ${
-              isScenarioActive('grid_outage')
-                ? 'bg-black text-[#FFD60A] translate-x-[4px] translate-y-[4px] shadow-[2px_2px_0_#000]'
-                : 'bg-black text-[#FFD60A] shadow-[4px_4px_0_#000] hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[8px_8px_0_#000] active:translate-x-[4px] active:translate-y-[4px] active:shadow-[2px_2px_0_#000]'
-            }`}
-          >
-            <div className="flex items-center justify-between mb-2">
-              <div className="w-8 h-8 rounded-[3px] bg-[#FFD60A] text-black border-2 border-black flex items-center justify-center">
-                <ZapOff className="w-5 h-5" />
-              </div>
-              <NeoBadge variant={isScenarioActive('grid_outage') ? 'red' : 'yellow'} tilt="right">
-                {isScenarioActive('grid_outage') ? 'ACTIVE' : '-60%'}
-              </NeoBadge>
-            </div>
-            <div>
-              <div className="font-extrabold text-sm uppercase tracking-tight text-[#FFD60A]">GRID OUTAGE</div>
-              <div className="text-[10px] font-mono font-bold uppercase mt-0.5 text-white/90">
-                CAP → 340 kW (40%)
-              </div>
-            </div>
-          </button>
-        </div>
-
-        {/* 4. Tank Leak (Mint) */}
-        <div className={isScenarioActive('tank_leak') ? 'striped-warning-tape rounded-[6px]' : ''}>
-          <button
-            onClick={() => onTrigger('tank_leak')}
-            className={`w-full h-full p-3 border-[3px] border-black rounded-[4px] font-['Space_Grotesk',sans-serif] text-left transition-all duration-100 flex flex-col justify-between select-none ${
-              isScenarioActive('tank_leak')
-                ? 'bg-[#06D6A0] text-black translate-x-[4px] translate-y-[4px] shadow-[2px_2px_0_#000]'
-                : 'bg-[#06D6A0] text-black shadow-[4px_4px_0_#000] hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[8px_8px_0_#000] active:translate-x-[4px] active:translate-y-[4px] active:shadow-[2px_2px_0_#000]'
-            }`}
-          >
-            <div className="flex items-center justify-between mb-2">
-              <div className="w-8 h-8 rounded-[3px] bg-black text-[#06D6A0] border-2 border-black flex items-center justify-center">
-                <Droplets className="w-5 h-5" />
-              </div>
-              <NeoBadge variant={isScenarioActive('tank_leak') ? 'black' : 'white'} tilt="left">
-                {isScenarioActive('tank_leak') ? 'ACTIVE' : '6 kL/h'}
-              </NeoBadge>
-            </div>
-            <div>
-              <div className="font-extrabold text-sm uppercase tracking-tight">TANK LEAK</div>
-              <div className="text-[10px] font-mono font-bold uppercase mt-0.5 opacity-90">
-                RESIDUAL WATER LOSS
-              </div>
-            </div>
-          </button>
-        </div>
-
-        {/* 5. Phantom Load (Lilac) */}
-        <div className={isScenarioActive('phantom_load') ? 'striped-warning-tape rounded-[6px]' : ''}>
-          <button
-            onClick={() => onTrigger('phantom_load')}
-            className={`w-full h-full p-3 border-[3px] border-black rounded-[4px] font-['Space_Grotesk',sans-serif] text-left transition-all duration-100 flex flex-col justify-between select-none ${
-              isScenarioActive('phantom_load')
-                ? 'bg-[#B388FF] text-black translate-x-[4px] translate-y-[4px] shadow-[2px_2px_0_#000]'
-                : 'bg-[#B388FF] text-black shadow-[4px_4px_0_#000] hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[8px_8px_0_#000] active:translate-x-[4px] active:translate-y-[4px] active:shadow-[2px_2px_0_#000]'
-            }`}
-          >
-            <div className="flex items-center justify-between mb-2">
-              <div className="w-8 h-8 rounded-[3px] bg-black text-[#B388FF] border-2 border-black flex items-center justify-center">
-                <Ghost className="w-5 h-5 text-white" />
-              </div>
-              <NeoBadge variant={isScenarioActive('phantom_load') ? 'black' : 'white'} tilt="right">
-                {isScenarioActive('phantom_load') ? 'ACTIVE' : 'STUCK'}
-              </NeoBadge>
-            </div>
-            <div>
-              <div className="font-extrabold text-sm uppercase tracking-tight">PHANTOM LOAD</div>
-              <div className="text-[10px] font-mono font-bold uppercase mt-0.5 opacity-90">
-                UNSCHEDULED BASELOAD
-              </div>
-            </div>
-          </button>
-        </div>
-
-        {/* 6. Reset (White) */}
-        <div>
-          <button
+      headerAction={
+        activeScenarios.length > 0 ? (
+          <NeoButton
+            variant="white"
+            size="sm"
             onClick={() => onTrigger('reset')}
-            className="w-full h-full p-3 border-[3px] border-black rounded-[4px] font-['Space_Grotesk',sans-serif] text-left transition-all duration-100 flex flex-col justify-between select-none bg-white text-black shadow-[4px_4px_0_#000] hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[8px_8px_0_#000] active:translate-x-[4px] active:translate-y-[4px] active:shadow-[2px_2px_0_#000]"
+            className="text-[10px] py-1 px-3"
           >
-            <div className="flex items-center justify-between mb-2">
-              <div className="w-8 h-8 rounded-[3px] bg-[#FFD60A] text-black border-2 border-black flex items-center justify-center">
-                <RotateCcw className="w-5 h-5" />
+            <RotateCcw className="w-3.5 h-3.5 mr-1" />
+            RESET ALL ({activeScenarios.length})
+          </NeoButton>
+        ) : undefined
+      }
+      bodyClassName="p-3 sm:p-4"
+    >
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+        {scenarios.map((scen) => {
+          const active = isScenarioActive(scen.id);
+          const Icon = scen.icon;
+
+          return (
+            <div
+              key={scen.id}
+              className={`border-[3px] border-black rounded-[4px] p-3 flex flex-col justify-between transition-all duration-100 ${
+                active
+                  ? 'striped-warning-tape bg-white shadow-[4px_4px_0_#000]'
+                  : 'bg-white shadow-[3px_3px_0_#000] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_#000]'
+              }`}
+            >
+              <div>
+                {/* Header row */}
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center space-x-2">
+                    <div className={`w-7 h-7 rounded-[3px] border-2 border-black flex items-center justify-center ${scen.color} ${scen.textColor} shadow-[1px_1px_0_#000]`}>
+                      <Icon className="w-4 h-4" />
+                    </div>
+                    <span className="font-extrabold uppercase text-xs tracking-tight">
+                      {scen.title}
+                    </span>
+                  </div>
+                  <NeoBadge variant={active ? 'red' : 'default'}>
+                    {active ? 'ACTIVE' : scen.badge}
+                  </NeoBadge>
+                </div>
+
+                {/* Description */}
+                <p className="text-[11px] text-neutral-700 leading-relaxed font-sans mb-2 font-medium">
+                  {scen.description}
+                </p>
+
+                {/* Expected response */}
+                <div className="bg-[#FFF8ED] border border-black rounded-[2px] p-1.5 text-[10px] font-mono text-neutral-800 mb-3">
+                  <strong className="text-black">RESPONSE:</strong> {scen.expected}
+                </div>
               </div>
-              <NeoBadge variant="mint" tilt="none">
-                NORMAL
-              </NeoBadge>
+
+              {/* Action Button */}
+              <button
+                onClick={() => onTrigger(scen.id)}
+                className={`w-full py-1.5 px-3 border-2 border-black rounded-[3px] font-['Space_Grotesk',sans-serif] font-bold text-xs uppercase transition-all duration-100 flex items-center justify-center space-x-1.5 select-none ${
+                  active
+                    ? 'bg-black text-[#FFD60A] shadow-[2px_2px_0_#000]'
+                    : `${scen.color} ${scen.textColor} shadow-[3px_3px_0_#000] hover:shadow-[5px_5px_0_#000] active:translate-x-0.5 active:translate-y-0.5`
+                }`}
+              >
+                {active ? (
+                  <>
+                    <Check className="w-3.5 h-3.5" />
+                    <span>INJECTED • CLICK TO DEACTIVATE</span>
+                  </>
+                ) : (
+                  <>
+                    <Icon className="w-3.5 h-3.5" />
+                    <span>TRIGGER SCENARIO</span>
+                  </>
+                )}
+              </button>
             </div>
-            <div>
-              <div className="font-extrabold text-sm uppercase tracking-tight">RESET CHAOS</div>
-              <div className="text-[10px] font-mono font-bold uppercase mt-0.5 opacity-80">
-                RESTORE NOMINAL TWIN
+          );
+        })}
+
+        {/* Quick Reset Card */}
+        <div className="border-[3px] border-black rounded-[4px] p-3 bg-[#FFF4E0] shadow-[3px_3px_0_#000] flex flex-col justify-between">
+          <div>
+            <div className="flex items-center space-x-2 mb-2">
+              <div className="w-7 h-7 rounded-[3px] bg-white border-2 border-black flex items-center justify-center shadow-[1px_1px_0_#000]">
+                <RotateCcw className="w-4 h-4 text-black" />
               </div>
+              <span className="font-extrabold uppercase text-xs tracking-tight">
+                RESTORE NOMINAL CONDITIONS
+              </span>
             </div>
-          </button>
+            <p className="text-[11px] text-neutral-700 leading-relaxed mb-3">
+              Deactivates all active stressors, restores the 850 kW sanctioned grid cap, clears pipe leaks, and returns all comfort floors to nominal defaults.
+            </p>
+          </div>
+
+          <NeoButton
+            variant="white"
+            size="md"
+            onClick={() => onTrigger('reset')}
+            className="w-full text-xs py-1.5"
+          >
+            <RotateCcw className="w-3.5 h-3.5 mr-1.5" />
+            RESET TO BASELINE
+          </NeoButton>
         </div>
       </div>
     </NeoCard>
