@@ -1,0 +1,22 @@
+{
+  "exam_week": {
+    "name": "Mid-Semester Examinations",
+    "description": "Exams underway across departments. High library occupancy, strict quiet hours, high hostel evening occupancy. Reading hall comfort floors non-negotiable.",
+    "comfort_penalty_multiplier": 1.8,
+    "min_tank_reserve_pct": 40.0,
+    "hostel_occupancy_boost": 0.25,
+    "library_occupancy_boost": 0.50
+  },
+  "convocation": {
+    "name": "Annual Convocation Ceremony",
+    "description": "Auditorium and admin areas packed. High visitor count, heightened comfort requirements in admin and central lawn.",
+    "comfort_penalty_multiplier": 1.5,
+    "admin_occupancy_boost": 0.60
+  },
+  "vip_visit": {
+    "name": "Chancellor & State Dignitary Inspection",
+    "description": "High-priority visit across Admin and Labs. HVAC comfort in main buildings cannot be aggressively curtailed.",
+    "comfort_penalty_multiplier": 2.0,
+    "admin_comfort_lock": true
+  }
+}
