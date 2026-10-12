@@ -19,7 +19,7 @@ University and institutional campuses consume massive amounts of electrical ener
 2. **Time-of-Day (TOD) Tariff Blindness:** Electricity during evening peak hours (18:00–22:00) costs **₹9.00/kWh** versus **₹5.50/kWh** during night off-peak. Facilities routinely run 45 kW borehole pumps and water heaters during peak hours due to lack of co-optimization.
 3. **Unobserved Underground Pipe Leaks:** Sub-surface distribution bursts lose upwards of 6,000 litres/hour for days or weeks without surface signs, draining water security and running booster pumps dry.
 4. **Phantom Energy Waste:** Auditoriums, lecture halls, and teaching labs regularly leave split ACs and lighting running with zero occupants after hours, wasting ~35 kW of continuous baseline power.
-5. **Split Incentives & Inflexible Blackouts:** Unlike blunt breaker cuts that disrupt examinations or kill critical server rigs, **Dachat** treats every campus building as an intelligent economic agent capable of expressing real human comfort constraints.
+5. **Split Incentives & Inflexible Blackouts:** Unlike blunt breaker cuts that disrupt examinations or kill critical server rigs, **Bachat** treats every campus building as an intelligent economic agent capable of expressing real human comfort constraints.
 
 ---
 
@@ -77,7 +77,7 @@ flowchart TD
 
 ## 🧮 Mathematical Formulation (The Solver)
 
-Rather than allowing generative LLMs to directly dispatch actuators to physical hardware (which risks hallucinations and safety violations), **Dachat** enforces the architecture: **"LLMs propose intent; a convex solver guarantees physics."**
+Rather than allowing generative LLMs to directly dispatch actuators to physical hardware (which risks hallucinations and safety violations), **Bachat** enforces the architecture: **"LLMs propose intent; a convex solver guarantees physics."**
 
 For each deficit trigger with target shed requirement $R$, the convex optimizer solves:
 
@@ -147,7 +147,7 @@ kaushal-hackathon-8.0/
 │   ├── weather_cache.json  # Cached Open-Meteo solar irradiance and temperatures
 │   └── history.parquet     # 60-day simulated training dataset
 ├── tests/
-│   └── test_Dachat.py  # Comprehensive pytest verification suite (9 tests)
+│   └── test_Bachat.py  # Comprehensive pytest verification suite (9 tests)
 └── Makefile                # Automation scripts
 ```
 
