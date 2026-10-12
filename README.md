@@ -1,13 +1,13 @@
-# CampusMind — AI-Powered Counterfactual Campus Digital Twin
+# CAMPUSMIND (BACHAT!!) — AI-Powered Counterfactual Campus Digital Twin
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](#)
 [![Tests](https://img.shields.io/badge/pytest-9%20passed-success)](#)
 [![ML Forecaster](https://img.shields.io/badge/LightGBM-MAPE%201.75%25-blue)](#)
-[![Solver](https://img.shields.io/badge/solver-cvxpy%20OSQP%2FECOS-orange)](#)
-[![Offline Capable](https://img.shields.io/badge/offline-100%25%20deterministic-purple)](#)
+[![Convex Solver](https://img.shields.io/badge/Solver-CVXPY%20OSQP%2FECOS-orange)](#)
+[![Offline Capable](https://img.shields.io/badge/Offline-100%25%20Deterministic-purple)](#)
 [![Hackathon Track](https://img.shields.io/badge/Track-PS--04%20Sustainable%20Tech%20Without%20Limits-yellow)](#)
 
-> **CampusMind** is a counterfactual digital twin of a university campus where AI zone-agents negotiate load-shedding under shifting academic priorities, a convex math solver validates feasibility and guarantees safety constraints, and a live counterfactual ledger proves the exact kilowatt-hours, rupees (₹), carbon (CO₂), and litres of water saved versus doing nothing.
+> **CAMPUSMIND (BACHAT!!)** is a production-grade counterfactual digital twin of an institutional university campus. Autonomous AI zone agents negotiate multi-building load-shedding under shifting academic priorities, a convex quadratic optimization solver (CVXPY) mathematically guarantees safety & comfort constraints, and a live counterfactual ledger proves the exact kilowatt-hours, rupees (₹), carbon (CO₂), and litres of water saved versus unmanaged status quo.
 
 ---
 
@@ -15,11 +15,11 @@
 
 University and institutional campuses consume massive amounts of electrical energy and potable water, yet operate on fragmented, manual, or completely unmanaged schedules. This creates **four major operational and economic crises**:
 
-1. **Catastrophic Contract Demand Penalties:** Power distribution companies (DISCOMs) bill institutions punitive surcharges (150%–200% above base tariff) the moment grid import exceeds the contracted demand cap (850 kW). Spikes during afternoon heatwaves or simultaneous chiller start-ups cause millions in needless fines.
+1. **Catastrophic Contract Demand Penalties:** Power distribution companies (DISCOMs) bill institutions punitive surcharges (150%–200% above base tariff) the moment grid import exceeds the contracted demand cap (**850 kW**). Spikes during afternoon heatwaves or simultaneous chiller start-ups cause millions in needless fines.
 2. **Time-of-Day (TOD) Tariff Blindness:** Electricity during evening peak hours (18:00–22:00) costs **₹9.00/kWh** versus **₹5.50/kWh** during night off-peak. Facilities routinely run 45 kW borehole pumps and water heaters during peak hours due to lack of co-optimization.
 3. **Unobserved Underground Pipe Leaks:** Sub-surface distribution bursts lose upwards of 6,000 litres/hour for days or weeks without surface signs, draining water security and running booster pumps dry.
 4. **Phantom Energy Waste:** Auditoriums, lecture halls, and teaching labs regularly leave split ACs and lighting running with zero occupants after hours, wasting ~35 kW of continuous baseline power.
-5. **Split Incentives & Inflexible Blackouts:** Unlike blunt breaker cuts that disrupt examinations or kill critical server rigs, **CampusMind** treats every campus building as an intelligent economic agent capable of expressing real human comfort constraints.
+5. **Split Incentives & Inflexible Blackouts:** Unlike blunt breaker cuts that disrupt examinations or kill critical server rigs, **CAMPUSMIND** treats every campus building as an intelligent economic agent capable of expressing real human comfort constraints.
 
 ---
 
@@ -35,8 +35,8 @@ flowchart TD
     end
 
     subgraph Intelligence ["2. Predictive & Anomaly AI Horizon"]
-        TWIN --> LGBM[LightGBM 24h Load Forecaster]
-        TWIN --> ISO[IsolationForest Phantom Anomaly]
+        TWIN --> LGBM[LightGBM 24h Load Forecaster - 1.75% MAPE]
+        TWIN --> ISO[IsolationForest Phantom Anomaly Detector]
         TWIN --> HYD[Mass-Balance Water Residual Detector]
         LGBM --> PEAK{Predicted Peak > 850 kW Cap?}
     end
@@ -54,7 +54,7 @@ flowchart TD
     end
 
     subgraph Verification ["4. Convex Math Safety Oracle"]
-        OFFERS --> SOLVER[cvxpy Convex Optimizer]
+        OFFERS --> SOLVER[CVXPY Convex Optimizer + KKT Analytical Fallback]
         SOLVER --> CONSTR{Check Hard Constraints:\nReading Hall <= 27°C\nTank Reserve >= 30%\nServer Racks Protected}
         CONSTR --> ALLOC[Optimal Co-Optimised Deal Formulated]
     end
@@ -77,7 +77,7 @@ flowchart TD
 
 ## 🧮 Mathematical Formulation (The Solver)
 
-Rather than allowing generative LLMs to directly dispatch actuators to physical hardware (which risks hallucinations and safety violations), **CampusMind** adopts the architecture: **"LLMs propose intent; a convex solver guarantees physics."**
+Rather than allowing generative LLMs to directly dispatch actuators to physical hardware (which risks hallucinations and safety violations), **CAMPUSMIND** enforces the architecture: **"LLMs propose intent; a convex solver guarantees physics."**
 
 For each deficit trigger with target shed requirement $R$, the convex optimizer solves:
 
@@ -102,7 +102,7 @@ Where:
 kaushal-hackathon-8.0/
 ├── backend/
 │   ├── main.py             # FastAPI REST gateway + WebSocket /ws broadcast
-│   ├── config.py           # Configuration schema, MPSERC tariffs & India grid factor
+│   ├── config.py           # Configuration schema, MPSERC tariffs & India grid factor (0.82 kg/kWh)
 │   ├── models.py           # Pydantic models (TwinState, Ask, AgentOffer, Deal, FeedMessage)
 │   ├── ledger.py           # Real-time counterfactual differential math & Monte Carlo bands
 │   ├── approvals.py        # HITL deal approval state machine & tamper-evident audit log
@@ -110,9 +110,9 @@ kaushal-hackathon-8.0/
 │   │   ├── engine.py       # TwinSim twin lockstep simulation engine
 │   │   ├── zones.py        # Zone thermal physics, ASHRAE-55 HVAC model & rebound queues
 │   │   ├── water.py        # Hydraulic reservoir balance, Grundfos pump model & leak dynamics
-│   │   ├── solar.py        # Solar PV GHI irradiance to electrical conversion
+│   │   ├── solar.py        # Solar PV GHI irradiance to electrical conversion (250 kWp)
 │   │   ├── weather.py      # Open-Meteo cache client (Indore coordinates: 22.7°N, 75.8°E)
-│   │   └── scenarios.py    # Chaos stressor injection engine
+│   │   └── scenarios.py    # Chaos stressor injection engine (heatwave, outage, exam, leaks)
 │   ├── ml/
 │   │   ├── datagen.py      # 60-day physics-grounded synthetic historical telemetry
 │   │   ├── forecast.py     # LightGBM GBDT 24h regressor (MAPE 1.75%)
@@ -121,9 +121,9 @@ kaushal-hackathon-8.0/
 │   │   ├── orchestrator.py # 2-round decentralized negotiation protocol
 │   │   ├── prompts.py      # System prompts with hard constraints & persona boundaries
 │   │   ├── fallback.py     # Deterministic calibrated BMS rule-based fallback agents
-│   │   └── llm.py          # Structured JSON client (Gemini / OpenAI / Anthropic / Mock)
+│   │   └── llm.py          # Structured JSON client (Gemini / OpenAI / Anthropic / Fallback)
 │   ├── solver/
-│   │   └── verify.py       # cvxpy convex allocation solver with OSQP / ECOS backends
+│   │   └── verify.py       # CVXPY convex allocation solver with OSQP/ECOS + KKT analytical fallback
 │   └── adapters/
 │       └── bms.py          # BACnet / MQTT hardware protocol stub adapter
 ├── frontend/
@@ -131,21 +131,22 @@ kaushal-hackathon-8.0/
 │   │   ├── App.tsx         # Neo-Brutalist dashboard, live WS state, HITL drawer
 │   │   ├── index.css       # Design tokens, dotted grid, neo-brutalist utility classes
 │   │   ├── components/
-│   │   │   ├── CampusMap.tsx       # 2D schematic SVG Digital Twin with live load styling
-│   │   │   ├── NegotiationFeed.tsx # Real-time agent chat stream with telemetry tags
+│   │   │   ├── CampusMap.tsx       # 2D schematic SVG Digital Twin with live load & delta comparison
+│   │   │   ├── CampusTimeline.tsx  # Diurnal Operations Cockpit with real physics scrubbing
+│   │   │   ├── NegotiationFeed.tsx # Real-time agent chat stream with telemetry tags & data inspect
 │   │   │   ├── DealCard.tsx        # Structured deal review cards & solver math diffs
 │   │   │   ├── LedgerPanel.tsx     # 5 big animated counters & Recharts baseline curves
 │   │   │   ├── ChaosPanel.tsx      # 5 live chaos stress testing injection cards
 │   │   │   ├── ForecastTab.tsx     # LightGBM 24h load forecast with annotated peak cap
 │   │   │   ├── OtherTabs.tsx       # Anomalies, Audit Trail, BMS Outbox & Architecture Workflow
-│   │   │   └── AssetDetailDrawer.tsx # Contextual telemetry panel for selected assets
+│   │   │   └── AssetDetailDrawer.tsx # Contextual telemetry drawer for selected assets
 ├── data/
 │   ├── timetable.csv       # Hourly occupant timetable schedule across 4 zones
 │   ├── weather_cache.json  # Cached Open-Meteo solar irradiance and temperatures
 │   └── history.parquet     # 60-day simulated training dataset
 ├── tests/
 │   └── test_campusmind.py  # Comprehensive pytest verification suite (9 tests)
-└── Makefile                # One-command automation script
+└── Makefile                # Automation scripts
 ```
 
 ---
@@ -156,17 +157,9 @@ kaushal-hackathon-8.0/
 * **Python 3.10+**
 * **Node.js 18+** and **npm**
 
-### Method 1: One-Command Start (`Makefile`)
-```bash
-make demo
-```
-This automatically sets up Python virtual environments, installs requirements, seeds telemetry data, trains the LightGBM forecaster, and launches both backend and frontend servers.
-
-### Method 2: Manual Terminal Launch
-
-**Terminal 1 — Backend:**
+### Terminal 1 — Backend:
 ```powershell
-# Create & activate venv
+# Create & activate virtual environment (Windows PowerShell)
 python -m venv .venv
 .venv\Scripts\Activate.ps1
 
@@ -174,10 +167,10 @@ python -m venv .venv
 pip install -r requirements.txt
 
 # Run server
-python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000
+python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000 --reload
 ```
 
-**Terminal 2 — Frontend:**
+### Terminal 2 — Frontend:
 ```powershell
 cd frontend
 npm install
@@ -192,10 +185,10 @@ Open **http://localhost:5173** in your web browser.
 
 | Time | Stage | Action & Key Talking Point |
 |---|---|---|
-| **0:00 - 0:30** | **The Baseline Twin** | Open dashboard. Point out the 2D digital twin: Hostels, Library, Labs, Admin, Solar Array, and Water Tank. The campus is running at nominal 620 kW import—comfortably below the **850 kW Contract Demand Limit**. |
-| **0:30 - 1:15** | **The Crisis (Chaos Button)** | Click **HEATWAVE INJECTION (+8°C)** in the Chaos Panel. The LightGBM forecaster immediately recalculates; predicted peak spikes to **945 kW (breaching the 850 kW cap)**. Within seconds, GridAgent broadcasts an **Ask**, and the Negotiation Feed streams live offers from zone agents. |
-| **1:15 - 1:45** | **LLM Proposes, Solver Disposes** | Show the pending **Deal Card**. Expand the **Solver Math Verification Diff**. Point out: *"The LLM proposed shedding 40 kW in the Library, but the convex solver clamped it to 28 kW to protect the 27°C reading hall comfort ceiling."* Click **APPROVE**. |
-| **1:45 - 2:15** | **Counterfactual Proof** | Look at the **Impact Ledger Chart**. Watch the green line (Managed Twin) drop below the red cap line, while the pink line (Unmanaged Baseline) spikes into penalty territory. Confetti bursts; counters for **₹ Saved**, **kWh Saved**, and **CO₂ Cut** increment with live confidence intervals. |
+| **0:00 - 0:30** | **The Baseline Twin** | Open dashboard. Point out the 2D digital twin: Hostels, Library, Labs, Admin, Solar Array, and Water Tank. The campus is running at nominal ~560 kW import—comfortably below the **850 kW Contract Demand Limit**. Toggle **Baseline View** vs **Managed View** to show real-time delta tracking. |
+| **0:30 - 1:15** | **The Crisis (Chaos Button)** | Click **SIMULATE PEAK DEFICIT (+8°C)** or **HEATWAVE** in the Chaos Panel. The LightGBM forecaster immediately recalculates; predicted peak spikes to **945 kW (breaching the 850 kW cap)**. Within seconds, GridAgent broadcasts an **Ask**, and the Negotiation Feed streams live offers from zone agents. |
+| **1:15 - 1:45** | **LLM Proposes, Solver Disposes** | Show the pending **Deal Card**. Expand the **Solver Math Verification Diff**. Point out: *"The agent proposed shedding 40 kW in the Library, but the convex solver clamped it to 28 kW to protect the 27°C reading hall comfort ceiling."* Click **APPROVE**. |
+| **1:45 - 2:15** | **Counterfactual Proof** | Look at the **Impact Ledger Chart**. Watch the green line (Managed Twin) stay safely under the 850 kW cap, while the pink line (Unmanaged Baseline) spikes into penalty territory. Counters for **₹ Saved**, **kWh Saved**, and **CO₂ Cut** increment with live confidence intervals. |
 | **2:15 - 2:40** | **Academic Context (Exam Week)** | Click **EXAM WEEK SCHEDULE**. Comfort floor weights jump to $w=2.8$. Library and Hostels refuse deep cuts. The solver shifts shedding to Administrative conference rooms and pausable batch GPU compute in Labs. |
 | **2:40 - 3:00** | **The Water-Energy Nexus** | Click **WATER TANK PIPE LEAK**. The residual anomaly detector identifies an unobserved 6 kL/h breach within 3 ticks. WaterAgent generates a valve branch isolation deal. Switch to the **BMS Outbox Tab** to show the real BACnet/MQTT JSON payload ready for physical PLCs. |
 
@@ -203,12 +196,12 @@ Open **http://localhost:5173** in your web browser.
 
 ## 🧪 Automated Testing & Verification
 
-Run the complete test suite:
+Run the test suite:
 ```powershell
 pytest
 ```
 ```
-============================== 9 passed in 1.77s ==============================
+============================== 9 passed in 1.89s ==============================
 ```
 
 ### Verified Test Matrix:
@@ -229,9 +222,9 @@ pytest
 ### REST Endpoints (`/api`)
 | Method | Endpoint | Description |
 |---|---|---|
-| `GET` | `/api/health` | Backend status, LLM mode, and model loading state |
+| `GET` | `/api/health` | Backend status, LLM mode, model loading state & MAPE |
 | `GET` | `/api/state` | Full state snapshot of baseline and managed twins |
-| `POST` | `/api/sim/control` | Control sim clock: `{"action": "play" \| "pause" \| "speed" \| "reset"}` |
+| `POST` | `/api/sim/control` | Control sim clock: `{"action": "play" \| "pause" \| "speed" \| "reset" \| "jump" \| "seek" \| "step" \| "step_back"}` |
 | `POST` | `/api/scenario` | Inject chaos stressor: `{"type": "heatwave" \| "exam_week" \| "grid_outage" \| "tank_leak" \| "phantom_load" \| "reset"}` |
 | `GET` | `/api/forecast` | LightGBM 24h load forecast with MAPE metric |
 | `GET` | `/api/anomalies` | Active phantom load and water leak anomalies |
@@ -247,9 +240,10 @@ pytest
 ### WebSocket Endpoint (`/ws`)
 Broadcasts real-time events:
 * `initial_state`: Sent immediately upon client connection.
-* `tick`: Emitted every 15 simulation minutes with updated telemetry and ledger summary.
+* `tick`: Emitted every 15 simulation minutes with updated telemetry, dynamic grid cap, and ledger summary.
 * `feed_message`: Live streaming negotiation messages.
 * `deal_update`: Deal status transitions (`pending` $\to$ `approved` $\to$ `applied`).
+* `scenario_update`: Active stressor states.
 * `anomaly`: Immediate anomaly alert emissions.
 * `feed_reset`: Resets feed history during simulation restarts.
 

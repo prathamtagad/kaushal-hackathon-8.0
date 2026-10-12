@@ -25,6 +25,17 @@ import {
   Flame, Droplet, IndianRupee, Layers, Leaf
 } from 'lucide-react';
 
+interface SystemConfig {
+  grid_cap_kw: number;
+  auto_approve: boolean;
+  llm_mode: string;
+  weather_source: string;
+  solar_peak_kw?: number;
+  tariff_peak?: number;
+  tariff_normal?: number;
+  tariff_offpeak?: number;
+}
+
 export const App: React.FC = () => {
   // State
   const [baseline, setBaseline] = useState<TwinState | null>(null);
@@ -35,7 +46,7 @@ export const App: React.FC = () => {
     is_paused: false,
     speed: 1.0
   });
-  const [config, setConfig] = useState<any>({
+  const [config, setConfig] = useState<SystemConfig>({
     grid_cap_kw: 850,
     auto_approve: false,
     llm_mode: 'mock',
@@ -55,7 +66,7 @@ export const App: React.FC = () => {
   });
   const [history, setHistory] = useState<LedgerHistoryPoint[]>([]);
   const [isConnected, setIsConnected] = useState<boolean>(false);
-  
+
   // Navigation & Inspector State
   const [activeWorkspaceTab, setActiveWorkspaceTab] = useState<'map' | 'analytics' | 'chaos' | 'inspect'>('map');
   const [inspectorSubTab, setInspectorSubTab] = useState<'forecast' | 'anomalies' | 'audit' | 'bms' | 'workflow'>('forecast');
@@ -128,7 +139,7 @@ export const App: React.FC = () => {
         setPendingDeals(data.pending_deals || []);
         if (data.ledger) setLedger(data.ledger);
       })
-      .catch(() => {});
+      .catch(() => { });
 
     // Fetch initial deals
     fetch('/api/deals')
@@ -136,7 +147,7 @@ export const App: React.FC = () => {
       .then((deals: Deal[]) => {
         setPendingDeals(deals.filter(d => d.status === 'pending'));
       })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   const handleWebSocketMessage = (msg: { type: string; data: any }) => {
@@ -156,6 +167,9 @@ export const App: React.FC = () => {
         setBaseline(msg.data.baseline);
         setManaged(msg.data.managed);
         setClock(msg.data.clock);
+        if (msg.data.config) {
+          setConfig((prev: SystemConfig) => ({ ...prev, ...msg.data.config }));
+        }
         if (msg.data.ledger) {
           setLedger(msg.data.ledger);
           // Append to history
@@ -165,7 +179,7 @@ export const App: React.FC = () => {
               time: msg.data.baseline.sim_time,
               baseline_import_kw: msg.data.baseline.grid_import_kw,
               managed_import_kw: msg.data.managed.grid_import_kw,
-              grid_cap_kw: config.grid_cap_kw
+              grid_cap_kw: msg.data.config?.grid_cap_kw || config.grid_cap_kw || 850
             }
           ]);
         }
@@ -350,7 +364,7 @@ export const App: React.FC = () => {
       {/* ======================================================== */}
       <header className="border-b-[3px] border-black bg-white px-4 sm:px-6 py-2.5 sticky top-0 z-40 shadow-[0_4px_0_#000]">
         <div className="max-w-[1720px] mx-auto flex flex-wrap items-center justify-between gap-3">
-          
+
           {/* GROUP 1: Brand & Project Context */}
           <div className="flex items-center space-x-3">
             <div className="bg-[#FFD60A] border-[3px] border-black rounded-[4px] px-3 py-1 shadow-[3px_3px_0_#000] flex items-center space-x-2 -rotate-1">
@@ -358,7 +372,7 @@ export const App: React.FC = () => {
                 <Zap className="w-4 h-4 fill-[#FFD60A]" />
               </div>
               <span className="font-extrabold text-base sm:text-lg tracking-tight uppercase text-black">
-                CAMPUSMIND
+                BACHAT!!
               </span>
             </div>
 
@@ -429,12 +443,12 @@ export const App: React.FC = () => {
           onStepBackward={handleStepBackward}
           onReset={handleResetSim}
         />
-        
+
         {/* ======================================================== */}
         {/* 2. OVERVIEW STRIP: Prominent KPIs + Smart Next Action */}
         {/* ======================================================== */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 items-stretch">
-          
+
           {/* Top 4 Essential KPIs */}
           <div className="lg:col-span-8 grid grid-cols-2 sm:grid-cols-4 gap-2.5">
             {/* KPI 1: Grid Import */}
@@ -552,11 +566,10 @@ export const App: React.FC = () => {
         <div className="flex flex-wrap items-center gap-2 border-b-2 border-black pb-2">
           <button
             onClick={() => setActiveWorkspaceTab('map')}
-            className={`px-3.5 py-1.5 border-2 border-black rounded-[4px] font-bold text-xs uppercase flex items-center space-x-1.5 transition-all ${
-              activeWorkspaceTab === 'map'
-                ? 'bg-[#FFD60A] text-black -translate-y-0.5 shadow-[3px_3px_0_#000]'
-                : 'bg-white text-black hover:bg-[#FFF4E0] shadow-[1px_1px_0_#000]'
-            }`}
+            className={`px-3.5 py-1.5 border-2 border-black rounded-[4px] font-bold text-xs uppercase flex items-center space-x-1.5 transition-all ${activeWorkspaceTab === 'map'
+              ? 'bg-[#FFD60A] text-black -translate-y-0.5 shadow-[3px_3px_0_#000]'
+              : 'bg-white text-black hover:bg-[#FFF4E0] shadow-[1px_1px_0_#000]'
+              }`}
           >
             <Building className="w-3.5 h-3.5" />
             <span>CAMPUS DIGITAL TWIN</span>
@@ -564,11 +577,10 @@ export const App: React.FC = () => {
 
           <button
             onClick={() => setActiveWorkspaceTab('analytics')}
-            className={`px-3.5 py-1.5 border-2 border-black rounded-[4px] font-bold text-xs uppercase flex items-center space-x-1.5 transition-all ${
-              activeWorkspaceTab === 'analytics'
-                ? 'bg-[#FFD60A] text-black -translate-y-0.5 shadow-[3px_3px_0_#000]'
-                : 'bg-white text-black hover:bg-[#FFF4E0] shadow-[1px_1px_0_#000]'
-            }`}
+            className={`px-3.5 py-1.5 border-2 border-black rounded-[4px] font-bold text-xs uppercase flex items-center space-x-1.5 transition-all ${activeWorkspaceTab === 'analytics'
+              ? 'bg-[#FFD60A] text-black -translate-y-0.5 shadow-[3px_3px_0_#000]'
+              : 'bg-white text-black hover:bg-[#FFF4E0] shadow-[1px_1px_0_#000]'
+              }`}
           >
             <TrendingDown className="w-3.5 h-3.5" />
             <span>IMPACT LEDGER & CHARTS</span>
@@ -576,11 +588,10 @@ export const App: React.FC = () => {
 
           <button
             onClick={() => setActiveWorkspaceTab('chaos')}
-            className={`px-3.5 py-1.5 border-2 border-black rounded-[4px] font-bold text-xs uppercase flex items-center space-x-1.5 transition-all ${
-              activeWorkspaceTab === 'chaos'
-                ? 'bg-[#FFD60A] text-black -translate-y-0.5 shadow-[3px_3px_0_#000]'
-                : 'bg-white text-black hover:bg-[#FFF4E0] shadow-[1px_1px_0_#000]'
-            }`}
+            className={`px-3.5 py-1.5 border-2 border-black rounded-[4px] font-bold text-xs uppercase flex items-center space-x-1.5 transition-all ${activeWorkspaceTab === 'chaos'
+              ? 'bg-[#FFD60A] text-black -translate-y-0.5 shadow-[3px_3px_0_#000]'
+              : 'bg-white text-black hover:bg-[#FFF4E0] shadow-[1px_1px_0_#000]'
+              }`}
           >
             <AlertTriangle className="w-3.5 h-3.5" />
             <span>CHAOS SCENARIO LAB</span>
@@ -591,11 +602,10 @@ export const App: React.FC = () => {
 
           <button
             onClick={() => setActiveWorkspaceTab('inspect')}
-            className={`px-3.5 py-1.5 border-2 border-black rounded-[4px] font-bold text-xs uppercase flex items-center space-x-1.5 transition-all ${
-              activeWorkspaceTab === 'inspect'
-                ? 'bg-[#FFD60A] text-black -translate-y-0.5 shadow-[3px_3px_0_#000]'
-                : 'bg-white text-black hover:bg-[#FFF4E0] shadow-[1px_1px_0_#000]'
-            }`}
+            className={`px-3.5 py-1.5 border-2 border-black rounded-[4px] font-bold text-xs uppercase flex items-center space-x-1.5 transition-all ${activeWorkspaceTab === 'inspect'
+              ? 'bg-[#FFD60A] text-black -translate-y-0.5 shadow-[3px_3px_0_#000]'
+              : 'bg-white text-black hover:bg-[#FFF4E0] shadow-[1px_1px_0_#000]'
+              }`}
           >
             <Layers className="w-3.5 h-3.5" />
             <span>INSPECTOR & PROTOCOL AUDIT</span>
@@ -619,6 +629,7 @@ export const App: React.FC = () => {
                   isNegotiating={isNegotiating}
                   onSelectAsset={(id) => setSelectedAsset(id)}
                   selectedAsset={selectedAsset}
+                  gridCapKw={config.grid_cap_kw || 850}
                 />
               )}
             </div>
@@ -684,11 +695,10 @@ export const App: React.FC = () => {
             <div className="flex flex-wrap items-center gap-2 border-b-2 border-black pb-3 mb-4">
               <button
                 onClick={() => setInspectorSubTab('forecast')}
-                className={`px-3 py-1.5 border-2 border-black rounded-[3px] font-bold text-xs uppercase flex items-center space-x-1.5 transition-all ${
-                  inspectorSubTab === 'forecast'
-                    ? 'bg-[#FFD60A] text-black shadow-[2px_2px_0_#000]'
-                    : 'bg-white text-black hover:bg-[#FFF4E0]'
-                }`}
+                className={`px-3 py-1.5 border-2 border-black rounded-[3px] font-bold text-xs uppercase flex items-center space-x-1.5 transition-all ${inspectorSubTab === 'forecast'
+                  ? 'bg-[#FFD60A] text-black shadow-[2px_2px_0_#000]'
+                  : 'bg-white text-black hover:bg-[#FFF4E0]'
+                  }`}
               >
                 <LineChartIcon className="w-3.5 h-3.5" />
                 <span>24H LOAD FORECAST</span>
@@ -696,11 +706,10 @@ export const App: React.FC = () => {
 
               <button
                 onClick={() => setInspectorSubTab('anomalies')}
-                className={`px-3 py-1.5 border-2 border-black rounded-[3px] font-bold text-xs uppercase flex items-center space-x-1.5 transition-all ${
-                  inspectorSubTab === 'anomalies'
-                    ? 'bg-[#FFD60A] text-black shadow-[2px_2px_0_#000]'
-                    : 'bg-white text-black hover:bg-[#FFF4E0]'
-                }`}
+                className={`px-3 py-1.5 border-2 border-black rounded-[3px] font-bold text-xs uppercase flex items-center space-x-1.5 transition-all ${inspectorSubTab === 'anomalies'
+                  ? 'bg-[#FFD60A] text-black shadow-[2px_2px_0_#000]'
+                  : 'bg-white text-black hover:bg-[#FFF4E0]'
+                  }`}
               >
                 <AlertTriangle className="w-3.5 h-3.5" />
                 <span>ANOMALIES & LEAKS ({anomalies.length})</span>
@@ -708,11 +717,10 @@ export const App: React.FC = () => {
 
               <button
                 onClick={() => setInspectorSubTab('audit')}
-                className={`px-3 py-1.5 border-2 border-black rounded-[3px] font-bold text-xs uppercase flex items-center space-x-1.5 transition-all ${
-                  inspectorSubTab === 'audit'
-                    ? 'bg-[#FFD60A] text-black shadow-[2px_2px_0_#000]'
-                    : 'bg-white text-black hover:bg-[#FFF4E0]'
-                }`}
+                className={`px-3 py-1.5 border-2 border-black rounded-[3px] font-bold text-xs uppercase flex items-center space-x-1.5 transition-all ${inspectorSubTab === 'audit'
+                  ? 'bg-[#FFD60A] text-black shadow-[2px_2px_0_#000]'
+                  : 'bg-white text-black hover:bg-[#FFF4E0]'
+                  }`}
               >
                 <FileText className="w-3.5 h-3.5" />
                 <span>AUDIT TRAIL</span>
@@ -720,11 +728,10 @@ export const App: React.FC = () => {
 
               <button
                 onClick={() => setInspectorSubTab('bms')}
-                className={`px-3 py-1.5 border-2 border-black rounded-[3px] font-bold text-xs uppercase flex items-center space-x-1.5 transition-all ${
-                  inspectorSubTab === 'bms'
-                    ? 'bg-[#FFD60A] text-black shadow-[2px_2px_0_#000]'
-                    : 'bg-white text-black hover:bg-[#FFF4E0]'
-                }`}
+                className={`px-3 py-1.5 border-2 border-black rounded-[3px] font-bold text-xs uppercase flex items-center space-x-1.5 transition-all ${inspectorSubTab === 'bms'
+                  ? 'bg-[#FFD60A] text-black shadow-[2px_2px_0_#000]'
+                  : 'bg-white text-black hover:bg-[#FFF4E0]'
+                  }`}
               >
                 <Terminal className="w-3.5 h-3.5" />
                 <span>BMS / MQTT OUTBOX</span>
@@ -732,11 +739,10 @@ export const App: React.FC = () => {
 
               <button
                 onClick={() => setInspectorSubTab('workflow')}
-                className={`px-3 py-1.5 border-2 border-black rounded-[3px] font-bold text-xs uppercase flex items-center space-x-1.5 transition-all ${
-                  inspectorSubTab === 'workflow'
-                    ? 'bg-[#06D6A0] text-black shadow-[2px_2px_0_#000]'
-                    : 'bg-white text-black hover:bg-[#FFF4E0]'
-                }`}
+                className={`px-3 py-1.5 border-2 border-black rounded-[3px] font-bold text-xs uppercase flex items-center space-x-1.5 transition-all ${inspectorSubTab === 'workflow'
+                  ? 'bg-[#06D6A0] text-black shadow-[2px_2px_0_#000]'
+                  : 'bg-white text-black hover:bg-[#FFF4E0]'
+                  }`}
               >
                 <Layers className="w-3.5 h-3.5" />
                 <span>ARCHITECTURE & WORKFLOW</span>

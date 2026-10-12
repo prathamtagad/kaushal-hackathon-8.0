@@ -1,4 +1,4 @@
-# CampusMind — Product Requirements Document
+# Bachat — Product Requirements Document
 
 > **Audience: an autonomous AI coding agent (Antigravity).** Build exactly what this document specifies. Make reasonable decisions yourself instead of asking questions. Where this PRD gives a default, use it. Priorities: **P0 = must ship, P1 = should ship, P2 = only if time remains.**
 
@@ -19,7 +19,7 @@
 
 ## 1. Product overview
 
-**Name:** CampusMind
+**Name:** Bachat
 **One-liner:** A counterfactual digital twin of a college campus where AI zone-agents negotiate load-shedding, a math solver verifies every deal, and a live ledger proves the kWh, ₹, CO₂ and litres saved versus doing nothing.
 
 **Problem (PS-04, Sustainable Tech Without Limits):** Campuses waste electricity and water because nobody tracks or acts on it in real time. Peaks hit during heat or exam weeks, water pumps run at expensive hours, lights and AC stay on in empty rooms, and tank leaks go unnoticed.
@@ -107,7 +107,7 @@
 **Data:** SQLite or in-memory + JSON files. No external DB.
 
 ```
-campusmind/
+Bachat/
 ├─ Makefile                  # make demo | make train | make test
 ├─ README.md                 # run steps, disclosures, architecture
 ├─ .env.example

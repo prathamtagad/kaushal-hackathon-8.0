@@ -1,4 +1,4 @@
-# CampusMind Makefile
+# Bachat Makefile
 # Usage: make demo  →  seeds data + trains model + starts backend + frontend
 # Requires: Python 3.11+, Node 18+ in PATH
 
@@ -12,7 +12,7 @@ all: demo
 
 ## ─────────────────────── ONE-COMMAND DEMO ───────────────────────
 demo: install seed train
-	@echo "Starting CampusMind..."
+	@echo "Starting Bachat..."
 	@start "Backend" cmd /c "$(UVICORN) backend.main:app --host 0.0.0.0 --port 8000 --reload 2>&1"
 	@start "Frontend" cmd /c "cd frontend && npm.cmd run dev 2>&1"
 	@echo "======================================================="
@@ -58,7 +58,7 @@ clean:
 	cd frontend && if exist node_modules rmdir /s /q node_modules
 
 help:
-	@echo CampusMind Makefile Targets
+	@echo Bachat Makefile Targets
 	@echo   make demo            - Full demo: install + seed + train + start servers
 	@echo   make install         - Install backend (venv) and frontend (npm) deps
 	@echo   make seed            - Generate synthetic history parquet

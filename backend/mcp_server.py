@@ -1,5 +1,5 @@
 """
-CampusMind MCP Server (PRD Section 13)
+Bachat MCP Server (PRD Section 13)
 Exposes tool functions for external AI agents or IDE integration:
 - get_forecast(zone)
 - get_zone_state(zone)

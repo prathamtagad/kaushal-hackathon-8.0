@@ -31,7 +31,7 @@ async def lifespan(app: FastAPI):
     if sim_task:
         sim_task.cancel()
 
-app = FastAPI(title="CampusMind Digital Twin", version="1.0.0", lifespan=lifespan)
+app = FastAPI(title="Bachat Digital Twin", version="1.0.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -209,6 +209,10 @@ async def step_simulation():
                 "sim_time": baseline_twin.current_time.isoformat(),
                 "is_paused": is_paused,
                 "speed": sim_speed
+            },
+            "config": {
+                "grid_cap_kw": effective_cap,
+                "auto_approve": auto_approve
             },
             "ledger": ledger_summary
         }

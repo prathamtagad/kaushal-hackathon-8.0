@@ -12,6 +12,7 @@ interface CampusMapProps {
   isNegotiating?: boolean;
   onSelectAsset?: (assetId: string) => void;
   selectedAsset?: string | null;
+  gridCapKw?: number;
 }
 
 export const CampusMap: React.FC<CampusMapProps> = ({
@@ -21,6 +22,7 @@ export const CampusMap: React.FC<CampusMapProps> = ({
   isNegotiating = false,
   onSelectAsset,
   selectedAsset,
+  gridCapKw = 850,
 }) => {
   const [viewMode, setViewMode] = useState<'managed' | 'baseline'>('managed');
   const [hoveredZone, setHoveredZone] = useState<string | null>(null);
@@ -168,7 +170,7 @@ export const CampusMap: React.FC<CampusMapProps> = ({
               cy="0"
               r="44"
               fill={
-                (currentTwin.grid_import_kw || 0) > 850
+                (currentTwin.grid_import_kw || 0) > gridCapKw
                   ? '#FF3B30'
                   : viewMode === 'managed'
                   ? '#06D6A0'
@@ -188,7 +190,7 @@ export const CampusMap: React.FC<CampusMapProps> = ({
             {/* High-contrast limit sticker pill */}
             <rect x="-38" y="16" width="76" height="16" rx="3" fill="#000000" />
             <text x="0" y="27.5" textAnchor="middle" fill="#FFD60A" fontSize="8.5" fontWeight="700" fontFamily="Space Mono">
-              LIMIT: 850kW
+              LIMIT: {Math.round(gridCapKw)}kW
             </text>
           </g>
 

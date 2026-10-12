@@ -64,7 +64,7 @@ export const AuditTab: React.FC = () => {
     fetch('/api/audit')
       .then(res => res.json())
       .then(data => setLogs(data || []))
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   return (
@@ -108,7 +108,7 @@ export const BmsOutputTab: React.FC = () => {
     fetch('/api/bms/outbox')
       .then(res => res.json())
       .then(data => setOutbox(data || []))
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   return (
@@ -154,7 +154,7 @@ export const WorkflowTab: React.FC = () => {
         <div className="flex flex-wrap items-center justify-between gap-2 border-b-2 border-black pb-2 mb-3">
           <div>
             <div className="flex items-center space-x-2">
-              <span className="text-sm font-extrabold uppercase tracking-tight">CAMPUSMIND END-TO-END SYSTEM WORKFLOW</span>
+              <span className="text-sm font-extrabold uppercase tracking-tight">Bachat END-TO-END SYSTEM WORKFLOW</span>
               <NeoBadge variant="mint">DECISION ARCHITECTURE</NeoBadge>
             </div>
             <p className="text-xs text-neutral-700 mt-1">
@@ -266,7 +266,7 @@ export const WorkflowTab: React.FC = () => {
         </div>
       </div>
 
-      {/* "WHAT PROBLEMS DOES CAMPUSMIND SOLVE?" SECTION */}
+      {/* "WHAT PROBLEMS DOES Bachat SOLVE?" SECTION */}
       <div className="bg-white border-[3px] border-black rounded-[4px] p-4 shadow-[4px_4px_0_#000]">
         <div className="flex items-center space-x-2 border-b-2 border-black pb-2 mb-3">
           <span className="font-extrabold text-xs uppercase tracking-tight">KEY PROBLEMS SOLVED & ECONOMIC/ENVIRONMENTAL IMPACT</span>
@@ -283,7 +283,7 @@ export const WorkflowTab: React.FC = () => {
             </div>
             <div className="font-extrabold text-xs mb-1">DISCOM Demand Charge Penalties</div>
             <p className="text-[11px] text-neutral-700 leading-relaxed font-sans">
-              Indian power distribution companies (DISCOMs) bill university campuses heavy penalties (150%–200% standard rate) whenever import exceeds the sanctioned contract demand (850 kW). CampusMind proactively detects impending peaks 2 hours ahead and negotiates shedding before breaches occur.
+              Indian power distribution companies (DISCOMs) bill university campuses heavy penalties (150%–200% standard rate) whenever import exceeds the sanctioned contract demand (850 kW). Bachat proactively detects impending peaks 2 hours ahead and negotiates shedding before breaches occur.
             </p>
           </div>
 
@@ -296,7 +296,7 @@ export const WorkflowTab: React.FC = () => {
             </div>
             <div className="font-extrabold text-xs mb-1">Time-Of-Day Tariff Arbitrage</div>
             <p className="text-[11px] text-neutral-700 leading-relaxed font-sans">
-              Electricity during evening peak hours (18:00–22:00) costs ₹9.00/kWh versus ₹5.50/kWh off-peak. Campuses routinely run water borewell pumps during peak hours. CampusMind co-schedules heavy pumping and laundry loads into off-peak or solar-surplus hours, cutting thousands in monthly bills.
+              Electricity during evening peak hours (18:00–22:00) costs ₹9.00/kWh versus ₹5.50/kWh off-peak. Campuses routinely run water borewell pumps during peak hours. Bachat co-schedules heavy pumping and laundry loads into off-peak or solar-surplus hours, cutting thousands in monthly bills.
             </p>
           </div>
 
