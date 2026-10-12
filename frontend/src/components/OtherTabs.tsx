@@ -1,49 +1,54 @@
 import React, { useState, useEffect } from 'react';
 import { Anomaly } from '../types';
-import { AlertCircle, FileText, Terminal, CheckCircle2, Droplet, Ghost } from 'lucide-react';
+import { CheckCircle2, Droplet, Ghost, AlertTriangle, Terminal, FileText, ArrowRight } from 'lucide-react';
+import { NeoBadge } from './ui/NeoBadge';
 
 export const AnomaliesTab: React.FC<{ anomalies: Anomaly[] }> = ({ anomalies }) => {
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 font-['Space_Grotesk',sans-serif]">
       {anomalies.length === 0 ? (
-        <div className="p-8 text-center text-gray-500 text-xs bg-gray-900/40 rounded-xl border border-gray-800">
-          <CheckCircle2 className="w-8 h-8 mx-auto mb-2 text-emerald-500/60" />
-          <div>Zero Active Campus Waste Anomalies Detected.</div>
-          <div className="text-[11px] text-gray-600 mt-1">
-            IsolationForest & Water Residual algorithms scanning continuously.
+        <div className="p-8 text-center bg-white border-[3px] border-black rounded-[4px] shadow-[4px_4px_0_#000]">
+          <div className="w-12 h-12 rounded-[4px] bg-[#06D6A0] border-2 border-black mx-auto mb-2 flex items-center justify-center shadow-[2px_2px_0_#000]">
+            <CheckCircle2 className="w-6 h-6 text-black" />
+          </div>
+          <div className="font-extrabold uppercase text-sm">ZERO CAMPUS WASTE DETECTED</div>
+          <div className="text-[11px] font-mono text-neutral-600 mt-1">
+            IsolationForest & Water Residual algorithms scanning continuously. All systems nominal.
           </div>
         </div>
       ) : (
         anomalies.map((anom) => (
           <div
             key={anom.anomaly_id}
-            className="p-3.5 rounded-xl bg-gray-900/80 border border-rose-500/40 flex items-start justify-between text-xs"
+            className="p-3.5 bg-[#FF3B30] text-white border-[3px] border-black rounded-[4px] shadow-[6px_6px_0_#000] flex items-start justify-between text-xs animate-neo-slide-in"
           >
             <div className="flex items-start space-x-3">
-              {anom.kind === 'tank_leak' ? (
-                <Droplet className="w-5 h-5 text-blue-400 mt-0.5" />
-              ) : (
-                <Ghost className="w-5 h-5 text-purple-400 mt-0.5" />
-              )}
+              <div className="w-8 h-8 rounded-[3px] bg-black text-white border-2 border-black flex items-center justify-center flex-shrink-0 shadow-[2px_2px_0_#000]">
+                {anom.kind === 'tank_leak' ? (
+                  <Droplet className="w-5 h-5 text-[#3A86FF]" />
+                ) : (
+                  <Ghost className="w-5 h-5 text-[#FFD60A]" />
+                )}
+              </div>
               <div>
                 <div className="flex items-center space-x-2">
-                  <span className="font-bold text-gray-200">{anom.message}</span>
-                  <span className="px-1.5 py-0.5 rounded text-[10px] uppercase font-mono font-bold bg-rose-950 text-rose-300 border border-rose-700">
+                  <span className="font-extrabold text-sm uppercase tracking-tight">{anom.message}</span>
+                  <NeoBadge variant="black" tilt="right">
                     CRITICAL
-                  </span>
+                  </NeoBadge>
                 </div>
-                <div className="text-[11px] text-gray-400 mt-1">
-                  Detected Since: <span className="font-mono text-gray-300">{new Date(anom.since).toLocaleTimeString()}</span>
-                  {anom.est_waste_kw > 0 && ` • Estimated Waste: ${anom.est_waste_kw} kW`}
-                  {anom.est_leak_kl_per_h > 0 && ` • Leak Rate: ${anom.est_leak_kl_per_h} kL/h`}
+                <div className="text-[11px] font-mono mt-1 text-white/90">
+                  SINCE: <span className="font-bold underline">{new Date(anom.since).toLocaleTimeString()}</span>
+                  {anom.est_waste_kw > 0 && ` • WASTE: ${anom.est_waste_kw} kW`}
+                  {anom.est_leak_kl_per_h > 0 && ` • LEAK: ${anom.est_leak_kl_per_h} kL/h`}
                 </div>
               </div>
             </div>
 
             <div className="text-right">
-              <span className="px-2.5 py-1 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono text-[10px]">
-                Deal Pending
-              </span>
+              <NeoBadge variant="yellow" tilt="left">
+                DEAL PENDING
+              </NeoBadge>
             </div>
           </div>
         ))
@@ -63,21 +68,30 @@ export const AuditTab: React.FC = () => {
   }, []);
 
   return (
-    <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
+    <div className="space-y-2 max-h-72 overflow-y-auto pr-1 font-['Space_Grotesk',sans-serif]">
       {logs.length === 0 ? (
-        <div className="p-8 text-center text-gray-500 text-xs">No audit entries yet.</div>
+        <div className="p-8 text-center bg-white border-[3px] border-black rounded-[4px] shadow-[4px_4px_0_#000] font-mono text-xs">
+          NO AUDIT LOG ENTRIES RECORDED YET.
+        </div>
       ) : (
         logs.map((entry) => (
-          <div key={entry.entry_id} className="p-2.5 rounded-lg bg-gray-900/60 border border-gray-800 text-[11px] flex items-center justify-between">
+          <div
+            key={entry.entry_id}
+            className="p-2.5 bg-white border-2 border-black rounded-[3px] shadow-[2px_2px_0_#000] text-xs flex flex-wrap items-center justify-between gap-2"
+          >
             <div className="flex items-center space-x-2">
-              <span className="font-mono text-[10px] text-gray-500">
+              <span className="font-mono text-[10px] bg-[#FFF4E0] border border-black px-1.5 py-0.5 rounded-[2px] font-bold">
                 {new Date(entry.timestamp).toLocaleTimeString()}
               </span>
-              <span className="font-bold text-gray-300 capitalize">{entry.actor}</span>
-              <span className="text-gray-500">→</span>
-              <span className="text-emerald-400 font-mono">{entry.action}</span>
+              <span className="font-extrabold uppercase bg-black text-[#FFD60A] px-1.5 py-0.5 rounded-[2px] text-[10px]">
+                {entry.actor}
+              </span>
+              <ArrowRight className="w-3 h-3 text-black" />
+              <span className="font-mono font-bold text-black uppercase bg-[#06D6A0] px-1.5 py-0.5 rounded-[2px] border border-black text-[10px]">
+                {entry.action}
+              </span>
             </div>
-            <div className="text-[10px] text-gray-400 font-mono">
+            <div className="text-[10px] font-mono font-bold text-neutral-700 bg-[#FFF8ED] px-2 py-0.5 rounded border border-black truncate max-w-md">
               {JSON.stringify(entry.details)}
             </div>
           </div>
@@ -98,25 +112,30 @@ export const BmsOutputTab: React.FC = () => {
   }, []);
 
   return (
-    <div className="space-y-2">
-      <div className="text-[11px] text-gray-400 mb-1 flex items-center justify-between">
-        <span>BMS / BACnet / MQTT Dispatch Outbox (Simulated Hardware Adapter)</span>
-        <span className="text-emerald-400 font-mono text-[10px] bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800">
-          Adapter: SimAdapter + MqttStub
+    <div className="space-y-2 font-['Space_Grotesk',sans-serif]">
+      <div className="text-xs font-extrabold uppercase flex flex-wrap items-center justify-between pb-1 border-b-2 border-black">
+        <span className="flex items-center space-x-1.5">
+          <Terminal className="w-4 h-4 text-black" />
+          <span>BMS / BACnet / MQTT DISPATCH OUTBOX (HARDWARE BRIDGE)</span>
         </span>
+        <NeoBadge variant="mint">
+          ADAPTER: SimAdapter + MqttStub
+        </NeoBadge>
       </div>
 
       <div className="space-y-2 max-h-64 overflow-y-auto font-mono text-[10px] pr-1">
         {outbox.length === 0 ? (
-          <div className="p-6 text-center text-gray-500 text-xs">No dispatched commands in BMS outbox yet.</div>
+          <div className="p-6 text-center bg-white border-2 border-black rounded-[3px] shadow-[2px_2px_0_#000] text-xs font-mono font-bold">
+            NO DISPATCHED COMMANDS IN BMS OUTBOX YET.
+          </div>
         ) : (
           outbox.map((cmd, idx) => (
-            <div key={idx} className="p-2.5 rounded-lg bg-black/60 border border-gray-800 text-gray-300">
-              <div className="flex justify-between text-emerald-400 font-bold mb-1">
-                <span>TOPIC: {cmd.topic}</span>
-                <span className="text-gray-500 font-normal">{new Date(cmd.dispatched_at).toLocaleTimeString()}</span>
+            <div key={idx} className="p-2.5 bg-black text-[#06D6A0] border-[3px] border-black rounded-[4px] shadow-[4px_4px_0_#000]">
+              <div className="flex justify-between font-bold mb-1 border-b border-neutral-700 pb-1">
+                <span className="text-[#FFD60A]">TOPIC: {cmd.topic}</span>
+                <span className="text-neutral-400 font-normal">{new Date(cmd.dispatched_at).toLocaleTimeString()}</span>
               </div>
-              <pre className="text-gray-300 overflow-x-auto text-[10px]">
+              <pre className="overflow-x-auto text-[10px] text-white">
                 {JSON.stringify(cmd.payload, null, 2)}
               </pre>
             </div>

@@ -10,9 +10,13 @@ import { LedgerPanel } from './components/LedgerPanel';
 import { ChaosPanel } from './components/ChaosPanel';
 import { ForecastTab } from './components/ForecastTab';
 import { AnomaliesTab, AuditTab, BmsOutputTab } from './components/OtherTabs';
+import { NeoButton } from './components/ui/NeoButton';
+import { NeoBadge } from './components/ui/NeoBadge';
+import { NeoCard } from './components/ui/NeoCard';
+import { ConfettiBurst } from './components/ui/ConfettiBurst';
 import {
   Play, Pause, FastForward, RotateCcw, Clock, ShieldCheck,
-  CheckCircle2, AlertTriangle, Cpu, Radio, Sparkles, Building2,
+  CheckCircle2, AlertTriangle, Cpu, Radio, Sparkles, Zap,
   LineChart as LineChartIcon, FileText, Terminal, Layers
 } from 'lucide-react';
 
@@ -47,6 +51,7 @@ export const App: React.FC = () => {
   const [history, setHistory] = useState<LedgerHistoryPoint[]>([]);
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<'forecast' | 'anomalies' | 'audit' | 'bms'>('forecast');
+  const [showConfetti, setShowConfetti] = useState<boolean>(false);
 
   const wsRef = useRef<WebSocket | null>(null);
 
@@ -215,15 +220,17 @@ export const App: React.FC = () => {
   const handleApproveDeal = (dealId: string) => {
     fetch(`/api/deals/${dealId}/approve`, { method: 'POST' })
       .then(res => res.json())
-      .then(d => {
+      .then(() => {
         setPendingDeals(prev => prev.filter(deal => deal.deal_id !== dealId));
+        // Confetti burst of flat colored squares on deal approval
+        setShowConfetti(true);
       });
   };
 
   const handleRejectDeal = (dealId: string) => {
     fetch(`/api/deals/${dealId}/reject`, { method: 'POST' })
       .then(res => res.json())
-      .then(d => {
+      .then(() => {
         setPendingDeals(prev => prev.filter(deal => deal.deal_id !== dealId));
       });
   };
@@ -254,7 +261,7 @@ export const App: React.FC = () => {
   const formatSimTime = (isoString: string) => {
     try {
       const dt = new Date(isoString);
-      const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
       const day = days[dt.getDay()];
       const hours = String(dt.getHours()).padStart(2, '0');
       const minutes = String(dt.getMinutes()).padStart(2, '0');
@@ -269,131 +276,144 @@ export const App: React.FC = () => {
     new Date().getTime() - new Date(feedMessages[feedMessages.length - 1].ts).getTime() < 8000;
 
   return (
-    <div className="min-h-screen bg-[#0B0F19] text-gray-100 flex flex-col font-['Inter',sans-serif]">
-      {/* Top Bar */}
-      <header className="border-b border-gray-800 bg-[#0E1424]/90 backdrop-blur-md px-5 py-3 sticky top-0 z-50 flex items-center justify-between">
-        {/* Brand & One-liner */}
-        <div className="flex items-center space-x-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-            <Building2 className="w-5 h-5 text-gray-950 font-bold" />
-          </div>
-          <div>
-            <div className="flex items-center space-x-2">
-              <h1 className="text-base font-bold tracking-tight text-white">CampusMind</h1>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-                Digital Twin
+    <div className="min-h-screen bg-[#FFF4E0] text-black flex flex-col font-['Space_Grotesk',sans-serif]">
+      {/* Celebratory Neo-Brutalist Confetti Burst */}
+      <ConfettiBurst trigger={showConfetti} onComplete={() => setShowConfetti(false)} />
+
+      {/* Top Bar: Thick black-bordered strip */}
+      <header className="border-b-[3px] border-black bg-white px-5 py-3 sticky top-0 z-50 shadow-[0_4px_0_#000]">
+        <div className="max-w-[1720px] mx-auto flex flex-wrap items-center justify-between gap-3">
+          {/* Logo as chunky yellow #FFD60A block with bolt mascot icon */}
+          <div className="flex items-center space-x-3">
+            <div className="bg-[#FFD60A] border-[3px] border-black rounded-[4px] px-3 py-1.5 shadow-[4px_4px_0_#000] flex items-center space-x-2 -rotate-1 hover:rotate-0 transition-transform">
+              <div className="w-6 h-6 rounded-[3px] bg-black text-[#FFD60A] flex items-center justify-center">
+                <Zap className="w-4 h-4 fill-[#FFD60A]" />
+              </div>
+              <span className="font-extrabold text-base sm:text-lg tracking-tight uppercase text-black font-['Space_Grotesk',sans-serif]">
+                CAMPUSMIND
               </span>
-              <span className="text-[10px] text-gray-500 hidden md:inline">PS-04 Sustainable Tech</span>
             </div>
-            <p className="text-[11px] text-gray-400">
-              Counterfactual campus twin • AI agent negotiation • Math solver verification
-            </p>
+
+            <div className="hidden sm:block">
+              <div className="flex items-center space-x-2">
+                <NeoBadge variant="pink" tilt="right">
+                  DIGITAL TWIN
+                </NeoBadge>
+                <span className="text-[11px] font-mono font-bold bg-[#FFF4E0] border border-black px-1.5 py-0.5 rounded-[2px]">
+                  PS-04 SUSTAINABLE TECH
+                </span>
+              </div>
+              <p className="text-[10px] font-mono font-bold text-neutral-600 mt-0.5">
+                COUNTERFACTUAL TWIN • AGENT NEGOTIATION • LP SOLVER
+              </p>
+            </div>
           </div>
-        </div>
 
-        {/* Sim Clock & Time Controls */}
-        <div className="flex items-center space-x-3 bg-gray-900/80 px-3 py-1.5 rounded-xl border border-gray-800 text-xs">
-          <div className="flex items-center space-x-1.5 font-mono text-emerald-300 font-semibold pr-2 border-r border-gray-700">
-            <Clock className="w-3.5 h-3.5 text-emerald-400" />
-            <span>{formatSimTime(clock.sim_time)}</span>
-          </div>
+          {/* Sim Clock in Space Mono inside a black pill with mint text */}
+          <div className="flex items-center space-x-2 bg-white border-[3px] border-black rounded-[4px] p-1.5 shadow-[4px_4px_0_#000]">
+            {/* Black Pill with Mint Space Mono Clock */}
+            <div className="flex items-center space-x-1.5 bg-black text-[#06D6A0] font-mono font-bold text-xs px-3 py-1 rounded-full border-2 border-black shadow-[2px_2px_0_#000]">
+              <Clock className="w-3.5 h-3.5 text-[#06D6A0]" />
+              <span>{formatSimTime(clock.sim_time)}</span>
+            </div>
 
-          {/* Play / Pause */}
-          <button
-            onClick={handlePlayPause}
-            className={`p-1.5 rounded-lg transition-all ${
-              clock.is_paused
-                ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
-                : 'bg-gray-800 hover:bg-gray-700 text-amber-300'
-            }`}
-            title={clock.is_paused ? 'Play simulation' : 'Pause simulation'}
-          >
-            {clock.is_paused ? <Play className="w-3.5 h-3.5" /> : <Pause className="w-3.5 h-3.5" />}
-          </button>
+            {/* Play / Pause Neo Button */}
+            <button
+              onClick={handlePlayPause}
+              className={`p-1.5 border-2 border-black rounded-[3px] font-bold transition-all duration-100 ${
+                clock.is_paused
+                  ? 'bg-[#06D6A0] text-black shadow-[2px_2px_0_#000] hover:bg-[#1CE5B1]'
+                  : 'bg-[#FFD60A] text-black shadow-[2px_2px_0_#000] hover:bg-[#FFE047]'
+              }`}
+              title={clock.is_paused ? 'Play simulation' : 'Pause simulation'}
+            >
+              {clock.is_paused ? <Play className="w-3.5 h-3.5 fill-black" /> : <Pause className="w-3.5 h-3.5 fill-black" />}
+            </button>
 
-          {/* Speeds */}
-          <div className="flex items-center space-x-1 font-mono text-[11px]">
-            {[1, 2, 4, 8].map((s) => (
+            {/* Speeds */}
+            <div className="flex items-center space-x-1 font-mono text-[11px] font-bold">
+              {[1, 2, 4, 8].map((s) => (
+                <button
+                  key={s}
+                  onClick={() => handleSpeedChange(s)}
+                  className={`px-1.5 py-0.5 border border-black rounded-[2px] transition-all ${
+                    clock.speed === s
+                      ? 'bg-[#FF4D8D] text-black font-extrabold shadow-[2px_2px_0_#000]'
+                      : 'bg-white text-black hover:bg-[#FFF4E0]'
+                  }`}
+                >
+                  {s}x
+                </button>
+              ))}
+            </div>
+
+            {/* Quick Jumps */}
+            <div className="hidden lg:flex items-center space-x-1 pl-2 border-l-2 border-black text-[10px] font-mono font-bold">
+              <span>JUMP:</span>
               <button
-                key={s}
-                onClick={() => handleSpeedChange(s)}
-                className={`px-1.5 py-0.5 rounded ${
-                  clock.speed === s
-                    ? 'bg-emerald-500/30 text-emerald-300 font-bold border border-emerald-500/50'
-                    : 'text-gray-400 hover:text-gray-200'
-                }`}
+                onClick={() => handleJumpTime('2026-10-12T12:00:00')}
+                className="px-1.5 py-0.5 bg-[#FFD60A] border border-black rounded-[2px] hover:shadow-[1px_1px_0_#000]"
               >
-                {s}x
+                NOON
               </button>
-            ))}
+              <button
+                onClick={() => handleJumpTime('2026-10-12T19:00:00')}
+                className="px-1.5 py-0.5 bg-[#FF7B00] border border-black rounded-[2px] hover:shadow-[1px_1px_0_#000]"
+              >
+                PEAK
+              </button>
+              <button
+                onClick={() => handleJumpTime('2026-10-12T23:00:00')}
+                className="px-1.5 py-0.5 bg-[#3A86FF] text-white border border-black rounded-[2px] hover:shadow-[1px_1px_0_#000]"
+              >
+                NIGHT
+              </button>
+            </div>
           </div>
 
-          {/* Jump-To Quick Times */}
-          <div className="hidden lg:flex items-center space-x-1 pl-2 border-l border-gray-700 text-[10px] text-gray-400 font-mono">
-            <span>Jump:</span>
-            <button
-              onClick={() => handleJumpTime('2026-10-12T12:00:00')}
-              className="hover:text-emerald-300 px-1 py-0.5 rounded bg-gray-800"
+          {/* Right Status Controls */}
+          <div className="flex items-center space-x-2 text-xs">
+            {/* 3-Minute Demo quick trigger */}
+            <NeoButton
+              variant="pink"
+              size="sm"
+              onClick={handleRunDemoScript}
+              className="flex items-center space-x-1 py-1"
+              title="Execute 3-minute hackathon demo script sequence"
             >
-              Noon
-            </button>
-            <button
-              onClick={() => handleJumpTime('2026-10-12T19:00:00')}
-              className="hover:text-amber-300 px-1 py-0.5 rounded bg-gray-800"
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>3-MIN DEMO</span>
+            </NeoButton>
+
+            {/* Auto-Approve Toggle */}
+            <NeoButton
+              variant={config.auto_approve ? 'mint' : 'white'}
+              size="sm"
+              isPressed={config.auto_approve}
+              onClick={handleAutoApproveToggle}
+              className="flex items-center space-x-1 py-1 font-mono text-[11px]"
             >
-              Peak
-            </button>
-            <button
-              onClick={() => handleJumpTime('2026-10-12T23:00:00')}
-              className="hover:text-blue-300 px-1 py-0.5 rounded bg-gray-800"
-            >
-              Night
-            </button>
-          </div>
-        </div>
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>AUTO-APP: {config.auto_approve ? 'ON' : 'OFF'}</span>
+            </NeoButton>
 
-        {/* Right Status Controls */}
-        <div className="flex items-center space-x-3 text-xs">
-          {/* Demo script quick trigger */}
-          <button
-            onClick={handleRunDemoScript}
-            className="hidden sm:flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 text-white font-semibold text-[11px] shadow-sm transition-all"
-            title="Execute 3-minute hackathon demo script sequence"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>3-Min Demo</span>
-          </button>
+            {/* LLM Mode Badge */}
+            <NeoBadge variant="lilac">
+              LLM: {config.llm_mode.toUpperCase()}
+            </NeoBadge>
 
-          {/* Auto-Approve Toggle */}
-          <button
-            onClick={handleAutoApproveToggle}
-            className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-mono transition-all ${
-              config.auto_approve
-                ? 'bg-emerald-950/60 border-emerald-500 text-emerald-300 font-bold'
-                : 'bg-gray-900 border-gray-700 text-gray-400 hover:border-gray-600'
-            }`}
-          >
-            <ShieldCheck className="w-3.5 h-3.5" />
-            <span>AUTO-APPROVE: {config.auto_approve ? 'ON' : 'OFF'}</span>
-          </button>
-
-          {/* Offline / LLM Mode Badge */}
-          <div className="flex items-center space-x-1 px-2 py-0.5 rounded bg-gray-900 border border-gray-800 text-[10px] font-mono text-gray-400">
-            <Cpu className="w-3 h-3 text-emerald-400" />
-            <span>LLM: {config.llm_mode.toUpperCase()}</span>
-          </div>
-
-          {/* Live WS Status */}
-          <div className="flex items-center space-x-1 text-[10px] font-mono text-gray-400">
-            <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-emerald-400 animate-pulse' : 'bg-rose-500'}`} />
-            <span>{isConnected ? 'LIVE' : 'DISCONNECTED'}</span>
+            {/* Live WS Status */}
+            <div className={`px-2 py-0.5 border-2 border-black rounded-[3px] shadow-[2px_2px_0_#000] font-mono text-[10px] font-bold flex items-center space-x-1.5 ${isConnected ? 'bg-[#06D6A0] text-black' : 'bg-[#FF3B30] text-white'}`}>
+              <span className={`w-2 h-2 rounded-full border border-black ${isConnected ? 'bg-black animate-ping' : 'bg-white'}`} />
+              <span>{isConnected ? 'LIVE' : 'DISCONNECTED'}</span>
+            </div>
           </div>
         </div>
       </header>
 
       {/* Main Workspace Body */}
-      <main className="flex-1 p-5 space-y-4 max-w-[1720px] mx-auto w-full">
-        {/* Top Section: 3 Columns Layout */}
+      <main className="flex-1 p-4 sm:p-5 space-y-4 max-w-[1720px] mx-auto w-full">
+        {/* Top Section: 3 Columns Grid */}
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-stretch min-h-[520px]">
           {/* Left: 2D Campus SVG Twin (5 cols) */}
           <div className="xl:col-span-5 h-full">
@@ -409,9 +429,9 @@ export const App: React.FC = () => {
 
           {/* Middle: Agent Negotiation Feed & Pending Deal Cards (4 cols) */}
           <div className="xl:col-span-4 h-full flex flex-col space-y-3">
-            {/* Pending Deal Alert Cards if any exist */}
+            {/* Pending Deal Cards with Approve / Reject pair */}
             {pendingDeals.length > 0 && (
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {pendingDeals.map((deal) => (
                   <DealCard
                     key={deal.deal_id}
@@ -440,61 +460,62 @@ export const App: React.FC = () => {
           </div>
         </div>
 
-        {/* Chaos Buttons Panel */}
+        {/* Chaos Buttons Panel (The Star!) */}
         <ChaosPanel
           activeScenarios={scenarios}
           onTrigger={handleChaosTrigger}
         />
 
         {/* Lower Inspector Tabs: Forecast, Anomalies, Audit, BMS Output */}
-        <div className="glass-panel rounded-2xl p-4">
-          <div className="flex items-center space-x-2 border-b border-gray-800 pb-2 mb-4">
+        <div className="bg-white border-[3px] border-black rounded-[4px] shadow-[6px_6px_0_#000] p-4">
+          {/* Neo-Brutalist Tabs: thick bordered tab shapes, active tab filled yellow and lifted */}
+          <div className="flex flex-wrap items-center gap-2 border-b-[3px] border-black pb-3 mb-4">
             <button
               onClick={() => setActiveTab('forecast')}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              className={`px-3 py-1.5 border-[3px] border-black rounded-[4px] font-['Space_Grotesk',sans-serif] font-extrabold text-xs uppercase flex items-center space-x-1.5 transition-all duration-100 ${
                 activeTab === 'forecast'
-                  ? 'bg-emerald-600 text-white shadow'
-                  : 'text-gray-400 hover:text-gray-200'
+                  ? 'bg-[#FFD60A] text-black -translate-y-1 shadow-[4px_4px_0_#000]'
+                  : 'bg-white text-black hover:bg-[#FFF4E0] shadow-[2px_2px_0_#000]'
               }`}
             >
-              <LineChartIcon className="w-3.5 h-3.5" />
-              <span>24h Load Forecast</span>
+              <LineChartIcon className="w-4 h-4" />
+              <span>24H LOAD FORECAST</span>
             </button>
 
             <button
               onClick={() => setActiveTab('anomalies')}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              className={`px-3 py-1.5 border-[3px] border-black rounded-[4px] font-['Space_Grotesk',sans-serif] font-extrabold text-xs uppercase flex items-center space-x-1.5 transition-all duration-100 ${
                 activeTab === 'anomalies'
-                  ? 'bg-emerald-600 text-white shadow'
-                  : 'text-gray-400 hover:text-gray-200'
+                  ? 'bg-[#FFD60A] text-black -translate-y-1 shadow-[4px_4px_0_#000]'
+                  : 'bg-white text-black hover:bg-[#FFF4E0] shadow-[2px_2px_0_#000]'
               }`}
             >
-              <AlertTriangle className="w-3.5 h-3.5" />
-              <span>Anomalies & Leaks ({anomalies.length})</span>
+              <AlertTriangle className="w-4 h-4 text-black" />
+              <span>ANOMALIES & LEAKS ({anomalies.length})</span>
             </button>
 
             <button
               onClick={() => setActiveTab('audit')}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              className={`px-3 py-1.5 border-[3px] border-black rounded-[4px] font-['Space_Grotesk',sans-serif] font-extrabold text-xs uppercase flex items-center space-x-1.5 transition-all duration-100 ${
                 activeTab === 'audit'
-                  ? 'bg-emerald-600 text-white shadow'
-                  : 'text-gray-400 hover:text-gray-200'
+                  ? 'bg-[#FFD60A] text-black -translate-y-1 shadow-[4px_4px_0_#000]'
+                  : 'bg-white text-black hover:bg-[#FFF4E0] shadow-[2px_2px_0_#000]'
               }`}
             >
-              <FileText className="w-3.5 h-3.5" />
-              <span>Audit Log</span>
+              <FileText className="w-4 h-4" />
+              <span>AUDIT TRAIL</span>
             </button>
 
             <button
               onClick={() => setActiveTab('bms')}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              className={`px-3 py-1.5 border-[3px] border-black rounded-[4px] font-['Space_Grotesk',sans-serif] font-extrabold text-xs uppercase flex items-center space-x-1.5 transition-all duration-100 ${
                 activeTab === 'bms'
-                  ? 'bg-emerald-600 text-white shadow'
-                  : 'text-gray-400 hover:text-gray-200'
+                  ? 'bg-[#FFD60A] text-black -translate-y-1 shadow-[4px_4px_0_#000]'
+                  : 'bg-white text-black hover:bg-[#FFF4E0] shadow-[2px_2px_0_#000]'
               }`}
             >
-              <Terminal className="w-3.5 h-3.5" />
-              <span>BMS / MQTT Outbox</span>
+              <Terminal className="w-4 h-4" />
+              <span>BMS / MQTT OUTBOX</span>
             </button>
           </div>
 
@@ -507,18 +528,23 @@ export const App: React.FC = () => {
         </div>
       </main>
 
-      {/* Footer with Mandated Disclosures */}
-      <footer className="border-t border-gray-800 bg-[#0A0D16] py-3 px-6 text-[11px] text-gray-500 flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0">
+      {/* Footer with Mandated Disclosures in Neo-Brutalist Strip */}
+      <footer className="border-t-[3px] border-black bg-white py-3 px-6 text-[11px] font-mono font-bold text-black flex flex-col sm:flex-row items-center justify-between gap-2 shadow-[0_-2px_0_#000]">
         <div>
-          Data: simulated, seeded with Open-Meteo weather for Indore (22.7°N, 75.8°E). Tariffs & emissions: assumed defaults.
+          DATA: SIMULATED • SEEDED WITH OPEN-METEO INDORE (22.7°N, 75.8°E) • TARIFFS & EMISSIONS: STANDARD MPSERC DEFAULTS
         </div>
-        <div className="flex items-center space-x-4">
-          <span>LLM Provider: Gemini 1.5 Flash (Offline Mock fallback active)</span>
+        <div className="flex items-center space-x-3">
+          <span className="bg-[#FFD60A] px-1.5 py-0.5 rounded-[2px] border border-black">
+            LLM: GEMINI 1.5 FLASH (OFFLINE MOCK ACTIVE)
+          </span>
           <span>•</span>
-          <span>FastAPI + LightGBM + scikit-learn + React</span>
+          <span className="bg-[#06D6A0] px-1.5 py-0.5 rounded-[2px] border border-black">
+            FASTAPI + LIGHTGBM + SCIKIT-LEARN + REACT
+          </span>
         </div>
       </footer>
     </div>
   );
 };
+
 export default App;

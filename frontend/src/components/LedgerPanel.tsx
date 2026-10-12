@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { LedgerMetrics, LedgerHistoryPoint } from '../types';
 import { Zap, IndianRupee, Leaf, Droplet, ArrowDownRight, RotateCcw, TrendingDown } from 'lucide-react';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, ReferenceLine, CartesianGrid, Area } from 'recharts';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, ReferenceLine, CartesianGrid } from 'recharts';
+import { NeoCard } from './ui/NeoCard';
+import { NeoButton } from './ui/NeoButton';
+import { NeoBadge } from './ui/NeoBadge';
+import { CountUpNumber } from './ui/CountUpNumber';
 
 interface LedgerPanelProps {
   metrics: LedgerMetrics;
@@ -22,7 +26,6 @@ export const LedgerPanel: React.FC<LedgerPanelProps> = ({
   });
 
   useEffect(() => {
-    // Fetch confidence bounds
     fetch('/api/ledger/confidence')
       .then(res => res.json())
       .then(data => {
@@ -38,161 +41,211 @@ export const LedgerPanel: React.FC<LedgerPanelProps> = ({
       .catch(() => {});
   }, [metrics.kwh_saved]);
 
-  const formatINR = (val: number) => {
-    return new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(val);
-  };
-
-  // Prepare chart data: format time label to HH:MM
   const chartData = history.slice(-24).map(point => ({
     ...point,
     displayTime: point.time ? point.time.substring(11, 16) : ''
   }));
 
   return (
-    <div className="glass-panel rounded-2xl p-4 flex flex-col h-full overflow-hidden">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center space-x-2">
-          <TrendingDown className="w-5 h-5 text-emerald-400" />
-          <h2 className="text-sm font-semibold tracking-wide text-gray-200 uppercase">
-            Impact Ledger (Live Counterfactual)
-          </h2>
-        </div>
-        <button
+    <NeoCard
+      title="IMPACT LEDGER"
+      subtitle="LIVE COUNTERFACTUAL"
+      headerColor="mint"
+      tag="SAVINGS"
+      tagColor="yellow"
+      icon={<TrendingDown className="w-5 h-5 text-black" />}
+      headerAction={
+        <NeoButton
+          size="sm"
+          variant="white"
           onClick={onReset}
-          className="text-[11px] text-gray-400 hover:text-gray-200 flex items-center space-x-1 px-2 py-0.5 rounded bg-gray-800/80 border border-gray-700 hover:border-gray-600 transition-all"
+          className="text-[10px] px-2 py-0.5 flex items-center space-x-1"
           title="Reset cumulative counters"
         >
-          <RotateCcw className="w-3 h-3" />
-          <span>Reset</span>
-        </button>
-      </div>
-
-      {/* 5 Big Impact Counters */}
-      <div className="grid grid-cols-5 gap-2.5 mb-4">
-        {/* Counter 1: kWh saved */}
-        <div className="bg-gradient-to-br from-gray-900/90 to-gray-800/50 p-2.5 rounded-xl border border-gray-800 text-center relative overflow-hidden">
-          <div className="text-[10px] text-gray-400 flex items-center justify-center space-x-1 mb-0.5">
-            <Zap className="w-3 h-3 text-amber-400" />
-            <span>Energy Saved</span>
+          <RotateCcw className="w-3 h-3 text-black" />
+          <span>RESET</span>
+        </NeoButton>
+      }
+      className="h-full"
+      bodyClassName="p-3 flex flex-col justify-between"
+    >
+      {/* 5 Giant Counter Tiles in Different Accent Colors with Space Mono count-up and uppercase label stickers */}
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 mb-3">
+        {/* Tile 1: Energy Saved (Yellow) */}
+        <div className="bg-[#FFD60A] text-black border-[3px] border-black rounded-[4px] p-2.5 shadow-[4px_4px_0_#000] flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-[9px] font-mono font-bold uppercase bg-black text-[#FFD60A] px-1.5 py-0.5 rounded-[2px]">
+              ENERGY
+            </span>
+            <Zap className="w-3.5 h-3.5 text-black" />
           </div>
-          <div className="text-lg font-bold text-amber-300 font-mono tracking-tight">
-            {metrics.kwh_saved.toLocaleString()} <span className="text-[10px] font-normal text-gray-400">kWh</span>
+          <div className="my-1.5">
+            <div className="text-xl sm:text-2xl font-extrabold font-mono tracking-tight leading-none">
+              <CountUpNumber value={metrics.kwh_saved} />
+            </div>
+            <div className="text-[9px] font-mono font-bold mt-0.5">kWh SAVED</div>
           </div>
-          <div className="text-[9px] text-gray-500 font-mono mt-0.5">
+          <div className="text-[8px] font-mono bg-white/70 border border-black px-1 py-0.5 rounded-[2px]">
             {confidence.kwhRange} p10-p90
           </div>
         </div>
 
-        {/* Counter 2: INR saved */}
-        <div className="bg-gradient-to-br from-emerald-950/40 to-gray-900/90 p-2.5 rounded-xl border border-emerald-800/40 text-center relative overflow-hidden shadow-lg shadow-emerald-950/20">
-          <div className="text-[10px] text-emerald-400 flex items-center justify-center space-x-1 mb-0.5 font-medium">
-            <IndianRupee className="w-3 h-3 text-emerald-400" />
-            <span>Tariff Saved</span>
+        {/* Tile 2: Tariff Saved (Mint) */}
+        <div className="bg-[#06D6A0] text-black border-[3px] border-black rounded-[4px] p-2.5 shadow-[4px_4px_0_#000] flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-[9px] font-mono font-bold uppercase bg-black text-[#06D6A0] px-1.5 py-0.5 rounded-[2px]">
+              TARIFF
+            </span>
+            <IndianRupee className="w-3.5 h-3.5 text-black" />
           </div>
-          <div className="text-lg font-bold text-emerald-300 font-mono tracking-tight">
-            ₹{formatINR(metrics.inr_saved)}
+          <div className="my-1.5">
+            <div className="text-xl sm:text-2xl font-extrabold font-mono tracking-tight leading-none">
+              <CountUpNumber value={metrics.inr_saved} prefix="₹" />
+            </div>
+            <div className="text-[9px] font-mono font-bold mt-0.5">INR SAVED</div>
           </div>
-          <div className="text-[9px] text-emerald-500/80 font-mono mt-0.5">
-            {confidence.inrRange} projected
+          <div className="text-[8px] font-mono bg-white/70 border border-black px-1 py-0.5 rounded-[2px]">
+            {confidence.inrRange} proj.
           </div>
         </div>
 
-        {/* Counter 3: kg CO2 */}
-        <div className="bg-gradient-to-br from-gray-900/90 to-gray-800/50 p-2.5 rounded-xl border border-gray-800 text-center relative overflow-hidden">
-          <div className="text-[10px] text-gray-400 flex items-center justify-center space-x-1 mb-0.5">
-            <Leaf className="w-3 h-3 text-green-400" />
-            <span>CO₂ Avoided</span>
+        {/* Tile 3: CO2 Avoided (Pink) */}
+        <div className="bg-[#FF4D8D] text-black border-[3px] border-black rounded-[4px] p-2.5 shadow-[4px_4px_0_#000] flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-[9px] font-mono font-bold uppercase bg-black text-[#FF4D8D] px-1.5 py-0.5 rounded-[2px]">
+              CARBON
+            </span>
+            <Leaf className="w-3.5 h-3.5 text-black" />
           </div>
-          <div className="text-lg font-bold text-green-300 font-mono tracking-tight">
-            {metrics.co2_kg_saved.toLocaleString()} <span className="text-[10px] font-normal text-gray-400">kg</span>
+          <div className="my-1.5">
+            <div className="text-xl sm:text-2xl font-extrabold font-mono tracking-tight leading-none">
+              <CountUpNumber value={metrics.co2_kg_saved} />
+            </div>
+            <div className="text-[9px] font-mono font-bold mt-0.5">kg CO₂ CUT</div>
           </div>
-          <div className="text-[9px] text-gray-500 font-mono mt-0.5">
+          <div className="text-[8px] font-mono bg-white/70 border border-black px-1 py-0.5 rounded-[2px]">
             @ 0.82 kg/kWh
           </div>
         </div>
 
-        {/* Counter 4: Litres Water Saved */}
-        <div className="bg-gradient-to-br from-gray-900/90 to-gray-800/50 p-2.5 rounded-xl border border-gray-800 text-center relative overflow-hidden">
-          <div className="text-[10px] text-gray-400 flex items-center justify-center space-x-1 mb-0.5">
-            <Droplet className="w-3 h-3 text-blue-400" />
-            <span>Water Saved</span>
+        {/* Tile 4: Water Saved (Electric Blue) */}
+        <div className="bg-[#3A86FF] text-white border-[3px] border-black rounded-[4px] p-2.5 shadow-[4px_4px_0_#000] flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-[9px] font-mono font-bold uppercase bg-black text-white px-1.5 py-0.5 rounded-[2px]">
+              WATER
+            </span>
+            <Droplet className="w-3.5 h-3.5 text-white" />
           </div>
-          <div className="text-lg font-bold text-blue-300 font-mono tracking-tight">
-            {metrics.litres_saved.toLocaleString()} <span className="text-[10px] font-normal text-gray-400">L</span>
+          <div className="my-1.5">
+            <div className="text-xl sm:text-2xl font-extrabold font-mono tracking-tight leading-none">
+              <CountUpNumber value={metrics.litres_saved} />
+            </div>
+            <div className="text-[9px] font-mono font-bold mt-0.5 text-white">LITRES WATER</div>
           </div>
-          <div className="text-[9px] text-gray-500 font-mono mt-0.5">
+          <div className="text-[8px] font-mono bg-white/20 border border-black px-1 py-0.5 rounded-[2px] text-white">
             leak isolation
           </div>
         </div>
 
-        {/* Counter 5: Peak kW Reduced */}
-        <div className="bg-gradient-to-br from-gray-900/90 to-gray-800/50 p-2.5 rounded-xl border border-gray-800 text-center relative overflow-hidden">
-          <div className="text-[10px] text-gray-400 flex items-center justify-center space-x-1 mb-0.5">
-            <ArrowDownRight className="w-3 h-3 text-purple-400" />
-            <span>Peak Shaved</span>
+        {/* Tile 5: Peak Shaved (Lilac) */}
+        <div className="col-span-2 sm:col-span-1 bg-[#B388FF] text-black border-[3px] border-black rounded-[4px] p-2.5 shadow-[4px_4px_0_#000] flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-[9px] font-mono font-bold uppercase bg-black text-[#B388FF] px-1.5 py-0.5 rounded-[2px]">
+              PEAK
+            </span>
+            <ArrowDownRight className="w-3.5 h-3.5 text-black" />
           </div>
-          <div className="text-lg font-bold text-purple-300 font-mono tracking-tight">
-            {metrics.peak_kw_reduced.toFixed(1)} <span className="text-[10px] font-normal text-gray-400">kW</span>
+          <div className="my-1.5">
+            <div className="text-xl sm:text-2xl font-extrabold font-mono tracking-tight leading-none">
+              <CountUpNumber value={metrics.peak_kw_reduced} decimals={1} />
+            </div>
+            <div className="text-[9px] font-mono font-bold mt-0.5">kW SHAVED</div>
           </div>
-          <div className="text-[9px] text-gray-500 font-mono mt-0.5">
+          <div className="text-[8px] font-mono bg-white/70 border border-black px-1 py-0.5 rounded-[2px]">
             vs baseline max
           </div>
         </div>
       </div>
 
-      {/* Baseline vs Managed Time-Series Chart */}
-      <div className="flex-1 w-full min-h-[220px] bg-[#0c1220] rounded-xl border border-gray-800/80 p-2 flex flex-col">
-        <div className="flex items-center justify-between text-xs px-2 mb-1">
-          <span className="text-gray-400 font-medium">Grid Import: Baseline vs Managed</span>
-          <div className="flex items-center space-x-3 text-[11px]">
-            <span className="flex items-center space-x-1">
-              <span className="w-2.5 h-0.5 bg-rose-500"></span>
-              <span className="text-rose-400">Baseline (Unmanaged)</span>
+      {/* Chart: thick black axes, 4px lines (baseline = pink, managed = mint), grid cap as dashed red line with a CAP sticker */}
+      <div className="flex-1 w-full min-h-[220px] bg-white border-[3px] border-black rounded-[4px] shadow-[4px_4px_0_#000] p-3 flex flex-col">
+        <div className="flex flex-wrap items-center justify-between text-xs pb-2 mb-2 border-b-2 border-black font-['Space_Grotesk',sans-serif]">
+          <span className="font-extrabold uppercase tracking-tight text-xs">
+            GRID IMPORT: BASELINE vs MANAGED
+          </span>
+          <div className="flex items-center space-x-2 text-[10px] font-mono font-bold">
+            <span className="inline-flex items-center space-x-1 bg-[#FF4D8D] text-black px-1.5 py-0.5 rounded-[2px] border border-black">
+              <span>BASELINE</span>
             </span>
-            <span className="flex items-center space-x-1">
-              <span className="w-2.5 h-0.5 bg-emerald-500"></span>
-              <span className="text-emerald-400">Managed (Agent Twin)</span>
+            <span className="inline-flex items-center space-x-1 bg-[#06D6A0] text-black px-1.5 py-0.5 rounded-[2px] border border-black">
+              <span>MANAGED</span>
             </span>
-            <span className="flex items-center space-x-1">
-              <span className="w-2.5 h-0.5 border-t border-dashed border-red-500"></span>
-              <span className="text-red-400">Cap ({gridCapKw} kW)</span>
+            <span className="inline-flex items-center space-x-1 bg-[#FF3B30] text-white px-1.5 py-0.5 rounded-[2px] border border-black">
+              <span>CAP {gridCapKw}kW</span>
             </span>
           </div>
         </div>
 
-        <div className="flex-1 w-full">
+        <div className="flex-1 w-full min-h-[160px]">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData} margin={{ top: 10, right: 15, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" vertical={false} />
-              <XAxis dataKey="displayTime" stroke="#6b7280" fontSize={10} tickLine={false} />
-              <YAxis stroke="#6b7280" fontSize={10} tickLine={false} domain={[0, 'dataMax + 100']} />
+            <LineChart data={chartData} margin={{ top: 12, right: 18, left: -15, bottom: 0 }}>
+              <defs>
+                {/* Flat hatched pattern for chart background */}
+                <pattern id="chartHatch" width="10" height="10" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+                  <line x1="0" y1="0" x2="0" y2="10" stroke="#000000" strokeWidth="0.8" opacity="0.1" />
+                </pattern>
+              </defs>
+              <CartesianGrid stroke="#000000" strokeDasharray="3 3" opacity={0.2} vertical={false} />
+              <XAxis dataKey="displayTime" stroke="#000000" strokeWidth={2} fontSize={10} fontFamily="Space Mono" tickLine={true} />
+              <YAxis stroke="#000000" strokeWidth={2} fontSize={10} fontFamily="Space Mono" tickLine={true} domain={[0, 'dataMax + 100']} />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: '#111827',
-                  borderColor: '#374151',
-                  borderRadius: '0.5rem',
-                  fontSize: '11px'
+                  backgroundColor: '#FFD60A',
+                  borderColor: '#000000',
+                  borderWidth: '2px',
+                  borderRadius: '3px',
+                  boxShadow: '4px 4px 0 #000',
+                  fontSize: '11px',
+                  fontFamily: 'Space Mono',
+                  fontWeight: 'bold',
+                  color: '#000000'
                 }}
                 formatter={(val: any, name: any) => [
                   `${val} kW`,
                   name === 'baseline_import_kw' ? 'Baseline Import' : 'Managed Import'
                 ]}
               />
-              <ReferenceLine y={gridCapKw} stroke="#ef4444" strokeDasharray="4 4" label={{ value: `Grid Cap ${gridCapKw}kW`, fill: '#ef4444', fontSize: 10, position: 'top' }} />
+              <ReferenceLine
+                y={gridCapKw}
+                stroke="#FF3B30"
+                strokeWidth={3}
+                strokeDasharray="6 4"
+                label={{
+                  value: `CAP ${gridCapKw}kW`,
+                  fill: '#FFFFFF',
+                  fontSize: 10,
+                  fontFamily: 'Space Mono',
+                  fontWeight: 'bold',
+                  position: 'insideTopRight',
+                  offset: 5,
+                  className: 'bg-black px-1 border border-black'
+                }}
+              />
+              {/* Baseline 4px Line (Pink) */}
               <Line
                 type="monotone"
                 dataKey="baseline_import_kw"
-                stroke="#f43f5e"
-                strokeWidth={2}
+                stroke="#FF4D8D"
+                strokeWidth={4}
                 dot={false}
                 isAnimationActive={false}
               />
+              {/* Managed 4px Line (Mint) */}
               <Line
                 type="monotone"
                 dataKey="managed_import_kw"
-                stroke="#10b981"
-                strokeWidth={2.5}
+                stroke="#06D6A0"
+                strokeWidth={4}
                 dot={false}
                 isAnimationActive={false}
               />
@@ -200,6 +253,6 @@ export const LedgerPanel: React.FC<LedgerPanelProps> = ({
           </ResponsiveContainer>
         </div>
       </div>
-    </div>
+    </NeoCard>
   );
 };

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Deal } from '../types';
 import { CheckCircle2, XCircle, ChevronDown, ChevronUp, Scale, Zap, IndianRupee, Leaf, Droplet, Clock } from 'lucide-react';
+import { NeoButton } from './ui/NeoButton';
+import { NeoBadge } from './ui/NeoBadge';
 
 interface DealCardProps {
   deal: Deal;
@@ -15,144 +17,155 @@ export const DealCard: React.FC<DealCardProps> = ({ deal, onApprove, onReject })
     return new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(val);
   };
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadgeVariant = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-amber-500/20 text-amber-300 border-amber-500/40 animate-pulse';
-      case 'approved': return 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40';
-      case 'applied': return 'bg-blue-500/20 text-blue-300 border-blue-500/40';
-      case 'rejected': return 'bg-rose-500/20 text-rose-300 border-rose-500/40';
-      case 'expired': return 'bg-gray-700/30 text-gray-400 border-gray-600';
-      default: return 'bg-gray-800 text-gray-300 border-gray-700';
+      case 'pending': return 'yellow';
+      case 'approved': return 'mint';
+      case 'applied': return 'blue';
+      case 'rejected': return 'pink';
+      default: return 'white';
     }
   };
 
   return (
-    <div className="glass-panel rounded-xl p-4 border border-gray-800 hover:border-gray-700 transition-all text-xs">
+    <div className="bg-white border-[3px] border-black rounded-[4px] shadow-[6px_6px_0_#000] p-3.5 text-xs font-['Space_Grotesk',sans-serif] animate-neo-pop">
       {/* Header */}
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between mb-2 pb-2 border-b-2 border-black">
         <div className="flex items-center space-x-2">
-          <Scale className="w-4 h-4 text-emerald-400" />
-          <span className="font-semibold text-gray-200 font-mono">{deal.deal_id}</span>
-          <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono uppercase font-bold border ${getStatusBadge(deal.status)}`}>
+          <div className="w-6 h-6 rounded-[3px] bg-[#FFD60A] border-2 border-black flex items-center justify-center">
+            <Scale className="w-3.5 h-3.5 text-black" />
+          </div>
+          <span className="font-extrabold text-sm uppercase tracking-tight font-mono">{deal.deal_id}</span>
+          <NeoBadge variant={getStatusBadgeVariant(deal.status) as any} tilt="right">
             {deal.status}
-          </span>
+          </NeoBadge>
         </div>
-        <div className="flex items-center space-x-1 text-gray-400 text-[11px] font-mono">
-          <Clock className="w-3.5 h-3.5 text-gray-500" />
-          <span>{deal.window_start ? new Date(deal.window_start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Now'}</span>
+        <div className="flex items-center space-x-1 font-mono text-[11px] font-bold bg-[#FFF4E0] border border-black px-2 py-0.5 rounded-[2px]">
+          <Clock className="w-3 h-3 text-black" />
+          <span>{deal.window_start ? new Date(deal.window_start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'NOW'}</span>
         </div>
       </div>
 
       {/* Summary message */}
-      <div className="text-gray-300 text-xs mb-3">
+      <div className="text-black text-xs font-semibold mb-3 leading-snug">
         {deal.summary_reasoning || `Co-optimised deal allocating ${deal.total_shed_kw} kW shedding across campus.`}
       </div>
 
-      {/* Savings counters row */}
-      <div className="grid grid-cols-4 gap-2 mb-3 bg-gray-900/60 p-2.5 rounded-lg border border-gray-800/80">
-        <div className="text-center">
-          <div className="text-[10px] text-gray-400 flex items-center justify-center space-x-0.5">
-            <Zap className="w-3 h-3 text-amber-400" />
+      {/* 4 Savings counters row in Neo-Brutalist boxes */}
+      <div className="grid grid-cols-4 gap-2 mb-3">
+        <div className="bg-[#FFD60A] border-2 border-black rounded-[3px] p-2 text-center shadow-[2px_2px_0_#000]">
+          <div className="text-[9px] font-extrabold uppercase flex items-center justify-center space-x-0.5">
+            <Zap className="w-3 h-3 text-black" />
             <span>Power</span>
           </div>
-          <div className="text-sm font-bold text-amber-300 font-mono">
-            {deal.total_shed_kw} <span className="text-[10px] font-normal">kW</span>
+          <div className="text-sm font-extrabold font-mono text-black mt-0.5">
+            {deal.total_shed_kw} <span className="text-[9px] font-normal">kW</span>
           </div>
         </div>
 
-        <div className="text-center">
-          <div className="text-[10px] text-gray-400 flex items-center justify-center space-x-0.5">
-            <IndianRupee className="w-3 h-3 text-emerald-400" />
-            <span>Estimated</span>
+        <div className="bg-[#06D6A0] border-2 border-black rounded-[3px] p-2 text-center shadow-[2px_2px_0_#000]">
+          <div className="text-[9px] font-extrabold uppercase flex items-center justify-center space-x-0.5">
+            <IndianRupee className="w-3 h-3 text-black" />
+            <span>Tariff</span>
           </div>
-          <div className="text-sm font-bold text-emerald-300 font-mono">
+          <div className="text-sm font-extrabold font-mono text-black mt-0.5">
             ₹{formatINR(deal.est_savings?.inr || 0)}
           </div>
         </div>
 
-        <div className="text-center">
-          <div className="text-[10px] text-gray-400 flex items-center justify-center space-x-0.5">
-            <Leaf className="w-3 h-3 text-green-400" />
-            <span>CO₂ Avoided</span>
+        <div className="bg-[#FF4D8D] border-2 border-black rounded-[3px] p-2 text-center shadow-[2px_2px_0_#000]">
+          <div className="text-[9px] font-extrabold uppercase flex items-center justify-center space-x-0.5">
+            <Leaf className="w-3 h-3 text-black" />
+            <span>CO₂ Avoid</span>
           </div>
-          <div className="text-sm font-bold text-green-300 font-mono">
-            {deal.est_savings?.co2_kg || 0} <span className="text-[10px] font-normal">kg</span>
+          <div className="text-sm font-extrabold font-mono text-black mt-0.5">
+            {deal.est_savings?.co2_kg || 0} <span className="text-[9px] font-normal">kg</span>
           </div>
         </div>
 
-        <div className="text-center">
-          <div className="text-[10px] text-gray-400 flex items-center justify-center space-x-0.5">
-            <Droplet className="w-3 h-3 text-blue-400" />
+        <div className="bg-[#3A86FF] text-white border-2 border-black rounded-[3px] p-2 text-center shadow-[2px_2px_0_#000]">
+          <div className="text-[9px] font-extrabold uppercase flex items-center justify-center space-x-0.5 text-white">
+            <Droplet className="w-3 h-3 text-white" />
             <span>Water</span>
           </div>
-          <div className="text-sm font-bold text-blue-300 font-mono">
-            {deal.est_savings?.litres || 0} <span className="text-[10px] font-normal">L</span>
+          <div className="text-sm font-extrabold font-mono text-white mt-0.5">
+            {deal.est_savings?.litres || 0} <span className="text-[9px] font-normal text-white">L</span>
           </div>
         </div>
       </div>
 
       {/* Allocations breakdown table */}
       <div className="space-y-1.5 mb-3">
-        <div className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">
-          Lever Allocations ({deal.allocations?.length || 0})
+        <div className="text-[10px] font-extrabold uppercase tracking-wider text-black">
+          LEVER ALLOCATIONS ({deal.allocations?.length || 0})
         </div>
-        <div className="divide-y divide-gray-800/80 bg-gray-900/40 rounded-lg border border-gray-800/60 overflow-hidden">
+        <div className="border-2 border-black rounded-[3px] overflow-hidden divide-y-2 divide-black bg-[#FFFDF9]">
           {deal.allocations?.map((alloc, idx) => (
             <div key={idx} className="flex items-center justify-between px-2.5 py-1.5 text-[11px]">
               <div className="flex items-center space-x-1.5">
-                <span className="font-semibold text-gray-200 capitalize">{alloc.zone_id}</span>
-                <span className="text-gray-500">•</span>
-                <span className="text-gray-400 font-mono uppercase text-[10px] bg-gray-800 px-1 rounded">
+                <span className="font-bold text-black uppercase">{alloc.zone_id}</span>
+                <span className="text-black font-bold">•</span>
+                <span className="font-mono font-bold uppercase text-[10px] bg-[#FFF4E0] border border-black px-1 rounded-[2px]">
                   {alloc.lever}
                 </span>
                 {alloc.setpoint_offset_c && (
-                  <span className="text-amber-400 text-[10px]">+{alloc.setpoint_offset_c}°C</span>
+                  <span className="font-mono font-bold text-[10px] bg-[#FFD60A] border border-black px-1 rounded-[2px]">
+                    +{alloc.setpoint_offset_c}°C
+                  </span>
                 )}
               </div>
               <div className="flex items-center space-x-2">
-                <span className="text-gray-400 text-[10px] truncate max-w-[150px]">{alloc.note}</span>
-                <span className="font-mono font-bold text-emerald-400">{alloc.shed_kw} kW</span>
+                <span className="text-[10px] text-neutral-600 truncate max-w-[130px] font-medium">{alloc.note}</span>
+                <span className="font-mono font-bold text-black bg-[#06D6A0] border border-black px-1.5 py-0.5 rounded-[2px]">
+                  {alloc.shed_kw} kW
+                </span>
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Solver Diff & Verification (Expandable) */}
-      <div className="border-t border-gray-800/80 pt-2 mb-3">
+      {/* Solver Diff & Verification: YELLOW HIGHLIGHTED BOX in Space Mono */}
+      <div className="mb-3">
         <button
           onClick={() => setExpanded(!expanded)}
-          className="w-full flex items-center justify-between text-left text-gray-400 hover:text-gray-200"
+          className="w-full flex items-center justify-between text-left font-extrabold text-[11px] uppercase bg-[#FFF4E0] hover:bg-[#FFE9C2] p-2 border-2 border-black rounded-[3px] transition-colors"
         >
-          <span className="font-semibold text-[11px] text-teal-400 flex items-center space-x-1">
-            <Scale className="w-3 h-3 text-teal-400" />
-            <span>Solver Verification & Math Diff</span>
+          <span className="flex items-center space-x-1.5">
+            <Scale className="w-3.5 h-3.5 text-black" />
+            <span>SOLVER MATH VERIFICATION DIFF</span>
           </span>
-          {expanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+          {expanded ? <ChevronUp className="w-4 h-4 text-black" /> : <ChevronDown className="w-4 h-4 text-black" />}
         </button>
 
         {expanded && (
-          <div className="mt-2 p-2.5 rounded-lg bg-black/50 border border-teal-500/30 space-y-2 text-[11px]">
-            <div className="flex justify-between text-gray-300">
-              <span>Solver Status:</span>
-              <span className="font-mono text-teal-300 font-bold uppercase">{deal.solver?.status || 'OPTIMAL'}</span>
+          <div className="mt-2 p-3 bg-[#FFD60A] text-black border-2 border-black rounded-[3px] shadow-[3px_3px_0_#000] space-y-2 font-mono text-[11px]">
+            <div className="flex justify-between border-b border-black pb-1">
+              <span className="font-bold">SOLVER STATUS:</span>
+              <span className="font-extrabold bg-black text-[#FFD60A] px-1.5 py-0.5 rounded-[2px] uppercase">
+                {deal.solver?.status || 'OPTIMAL'}
+              </span>
             </div>
-            <div className="flex justify-between text-gray-300">
-              <span>LLM Proposed Total:</span>
-              <span className="font-mono text-amber-300">{deal.solver?.llm_proposed_total_kw || deal.total_shed_kw} kW</span>
+            <div className="flex justify-between border-b border-black pb-1">
+              <span>LLM PROPOSED TOTAL:</span>
+              <span className="font-bold">{deal.solver?.llm_proposed_total_kw || deal.total_shed_kw} kW</span>
             </div>
-            <div className="flex justify-between text-gray-300">
-              <span>Solver Approved Total:</span>
-              <span className="font-mono text-emerald-300 font-bold">{deal.total_shed_kw} kW</span>
+            <div className="flex justify-between border-b border-black pb-1">
+              <span>SOLVER APPROVED TOTAL:</span>
+              <span className="font-extrabold text-black bg-white border border-black px-1 rounded-[2px]">
+                {deal.total_shed_kw} kW
+              </span>
             </div>
 
             {deal.solver?.adjusted && deal.solver.adjusted.length > 0 && (
-              <div className="pt-2 border-t border-gray-800 space-y-1">
-                <div className="text-amber-400 font-semibold text-[10px]">Adjustments & Clamped Constraints:</div>
+              <div className="pt-1 space-y-1">
+                <div className="font-extrabold text-[10px] uppercase text-black">
+                  CLAMPED CONSTRAINTS & ADJUSTMENTS:
+                </div>
                 {deal.solver.adjusted.map((adj, i) => (
-                  <div key={i} className="text-[10px] text-gray-300 bg-gray-900/80 p-1.5 rounded border border-gray-800">
-                    <span className="font-bold text-amber-300 capitalize">{adj.zone}</span>: {adj.from_kw} kW → <span className="font-bold text-emerald-300">{adj.to_kw} kW</span>
-                    <div className="text-gray-400 italic text-[9px] mt-0.5">{adj.reason}</div>
+                  <div key={i} className="text-[10px] bg-white text-black p-1.5 rounded-[2px] border border-black">
+                    <span className="font-extrabold uppercase">{adj.zone}</span>: {adj.from_kw} kW → <span className="font-extrabold underline">{adj.to_kw} kW</span>
+                    <div className="text-[9px] font-sans italic mt-0.5">{adj.reason}</div>
                   </div>
                 ))}
               </div>
@@ -161,23 +174,27 @@ export const DealCard: React.FC<DealCardProps> = ({ deal, onApprove, onReject })
         )}
       </div>
 
-      {/* HITL Approve / Reject Buttons if Pending */}
+      {/* HITL Approve / Reject Buttons pair: Large Green APPROVE and Pink REJECT */}
       {deal.status === 'pending' && (
-        <div className="flex items-center space-x-2 pt-1 border-t border-gray-800">
-          <button
+        <div className="grid grid-cols-2 gap-2 pt-2 border-t-2 border-black">
+          <NeoButton
+            variant="mint"
+            size="md"
             onClick={() => onApprove(deal.deal_id)}
-            className="flex-1 py-1.5 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold flex items-center justify-center space-x-1.5 transition-all shadow-md shadow-emerald-900/20"
+            className="w-full flex items-center justify-center space-x-1.5 text-xs py-2"
           >
-            <CheckCircle2 className="w-3.5 h-3.5" />
-            <span>Approve & Apply to BMS</span>
-          </button>
-          <button
+            <CheckCircle2 className="w-4 h-4 text-black" />
+            <span>APPROVE</span>
+          </NeoButton>
+          <NeoButton
+            variant="pink"
+            size="md"
             onClick={() => onReject(deal.deal_id)}
-            className="py-1.5 px-3 rounded-lg bg-rose-950/60 hover:bg-rose-900 border border-rose-700/60 text-rose-300 font-semibold flex items-center justify-center space-x-1.5 transition-all"
+            className="w-full flex items-center justify-center space-x-1.5 text-xs py-2"
           >
-            <XCircle className="w-3.5 h-3.5" />
-            <span>Reject</span>
-          </button>
+            <XCircle className="w-4 h-4 text-black" />
+            <span>REJECT</span>
+          </NeoButton>
         </div>
       )}
     </div>
