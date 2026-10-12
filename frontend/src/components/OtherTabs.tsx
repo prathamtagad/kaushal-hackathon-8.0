@@ -145,3 +145,188 @@ export const BmsOutputTab: React.FC = () => {
     </div>
   );
 };
+
+export const WorkflowTab: React.FC = () => {
+  return (
+    <div className="space-y-4 font-['Space_Grotesk',sans-serif]">
+      {/* Header Banner */}
+      <div className="bg-[#FFF4E0] border-[3px] border-black rounded-[4px] p-4 shadow-[4px_4px_0_#000]">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b-2 border-black pb-2 mb-3">
+          <div>
+            <div className="flex items-center space-x-2">
+              <span className="text-sm font-extrabold uppercase tracking-tight">CAMPUSMIND END-TO-END SYSTEM WORKFLOW</span>
+              <NeoBadge variant="mint">DECISION ARCHITECTURE</NeoBadge>
+            </div>
+            <p className="text-xs text-neutral-700 mt-1">
+              How AI zone agents, predictive LightGBM ML, convex safety optimization, and counterfactual twins interact in real-time.
+            </p>
+          </div>
+          <div className="text-right font-mono text-[10px] font-bold bg-black text-[#FFD60A] px-2 py-1 rounded-[2px]">
+            PS-04 SUSTAINABLE TECH
+          </div>
+        </div>
+
+        {/* Interactive Step-by-Step Architecture Pipeline */}
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-2 text-xs">
+          {/* Step 1 */}
+          <div className="bg-white border-2 border-black rounded-[3px] p-2.5 shadow-[2px_2px_0_#000] flex flex-col justify-between">
+            <div>
+              <div className="text-[10px] font-mono font-extrabold bg-[#FFD60A] text-black px-1.5 py-0.5 rounded-[2px] border border-black inline-block mb-1.5">
+                STEP 01
+              </div>
+              <div className="font-extrabold uppercase text-[11px] mb-1">DIGITAL TWIN SENSORS</div>
+              <p className="text-[10px] text-neutral-700 font-sans leading-tight">
+                Simulated 415V feeder import, solar PV output, 4 building zone sub-meters, and 300 kL reservoir level updated every 15 min.
+              </p>
+            </div>
+            <div className="mt-2 text-[9px] font-mono text-neutral-500 border-t border-neutral-300 pt-1">
+              Physics engine lockstep
+            </div>
+          </div>
+
+          {/* Step 2 */}
+          <div className="bg-white border-2 border-black rounded-[3px] p-2.5 shadow-[2px_2px_0_#000] flex flex-col justify-between">
+            <div>
+              <div className="text-[10px] font-mono font-extrabold bg-[#3A86FF] text-white px-1.5 py-0.5 rounded-[2px] border border-black inline-block mb-1.5">
+                STEP 02
+              </div>
+              <div className="font-extrabold uppercase text-[11px] mb-1">LIGHTGBM & ML PREDICTIONS</div>
+              <p className="text-[10px] text-neutral-700 font-sans leading-tight">
+                24-hour GBDT load forecast (MAPE &lt; 2%) evaluates weather, solar irradiance, and timetable occupancy. Detects anomalies.
+              </p>
+            </div>
+            <div className="mt-2 text-[9px] font-mono text-neutral-500 border-t border-neutral-300 pt-1">
+              Horizon trigger check
+            </div>
+          </div>
+
+          {/* Step 3 */}
+          <div className="bg-white border-2 border-black rounded-[3px] p-2.5 shadow-[2px_2px_0_#000] flex flex-col justify-between">
+            <div>
+              <div className="text-[10px] font-mono font-extrabold bg-[#FF7B00] text-black px-1.5 py-0.5 rounded-[2px] border border-black inline-block mb-1.5">
+                STEP 03
+              </div>
+              <div className="font-extrabold uppercase text-[11px] mb-1">MULTI-AGENT NEGOTIATION</div>
+              <p className="text-[10px] text-neutral-700 font-sans leading-tight">
+                GridAgent broadcasts Ask. Hostel, Library, Labs, Admin & Water agents formulate structured offers based on comfort priorities.
+              </p>
+            </div>
+            <div className="mt-2 text-[9px] font-mono text-neutral-500 border-t border-neutral-300 pt-1">
+              LLM + dynamic weights
+            </div>
+          </div>
+
+          {/* Step 4 */}
+          <div className="bg-white border-2 border-black rounded-[3px] p-2.5 shadow-[2px_2px_0_#000] flex flex-col justify-between">
+            <div>
+              <div className="text-[10px] font-mono font-extrabold bg-[#FF4D8D] text-black px-1.5 py-0.5 rounded-[2px] border border-black inline-block mb-1.5">
+                STEP 04
+              </div>
+              <div className="font-extrabold uppercase text-[11px] mb-1">CONVEX SOLVER (cvxpy)</div>
+              <p className="text-[10px] text-neutral-700 font-sans leading-tight">
+                Quadratic penalty optimizer validates offers, guarantees hard thermal bounds (&le;27°C) & reserve floors, outputting optimal allocations.
+              </p>
+            </div>
+            <div className="mt-2 text-[9px] font-mono text-neutral-500 border-t border-neutral-300 pt-1">
+              Hard constraint oracle
+            </div>
+          </div>
+
+          {/* Step 5 */}
+          <div className="bg-white border-2 border-black rounded-[3px] p-2.5 shadow-[2px_2px_0_#000] flex flex-col justify-between">
+            <div>
+              <div className="text-[10px] font-mono font-extrabold bg-[#06D6A0] text-black px-1.5 py-0.5 rounded-[2px] border border-black inline-block mb-1.5">
+                STEP 05
+              </div>
+              <div className="font-extrabold uppercase text-[11px] mb-1">HITL FACILITY APPROVAL</div>
+              <p className="text-[10px] text-neutral-700 font-sans leading-tight">
+                Facility manager inspects deal reasoning and solver diff. One-click Approve or automated policy dispatches BMS commands.
+              </p>
+            </div>
+            <div className="mt-2 text-[9px] font-mono text-neutral-500 border-t border-neutral-300 pt-1">
+              BACnet/MQTT outbox
+            </div>
+          </div>
+
+          {/* Step 6 */}
+          <div className="bg-white border-2 border-black rounded-[3px] p-2.5 shadow-[2px_2px_0_#000] flex flex-col justify-between">
+            <div>
+              <div className="text-[10px] font-mono font-extrabold bg-[#B388FF] text-black px-1.5 py-0.5 rounded-[2px] border border-black inline-block mb-1.5">
+                STEP 06
+              </div>
+              <div className="font-extrabold uppercase text-[11px] mb-1">COUNTERFACTUAL LEDGER</div>
+              <p className="text-[10px] text-neutral-700 font-sans leading-tight">
+                Managed twin differential measured against unmanaged baseline in real-time, accounting for HVAC rebound and TOD tariffs.
+              </p>
+            </div>
+            <div className="mt-2 text-[9px] font-mono text-neutral-500 border-t border-neutral-300 pt-1">
+              Proved kWh, ₹, CO₂, & Litres
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* "WHAT PROBLEMS DOES CAMPUSMIND SOLVE?" SECTION */}
+      <div className="bg-white border-[3px] border-black rounded-[4px] p-4 shadow-[4px_4px_0_#000]">
+        <div className="flex items-center space-x-2 border-b-2 border-black pb-2 mb-3">
+          <span className="font-extrabold text-xs uppercase tracking-tight">KEY PROBLEMS SOLVED & ECONOMIC/ENVIRONMENTAL IMPACT</span>
+          <NeoBadge variant="yellow">REAL-WORLD IMPACT</NeoBadge>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+          {/* Card 1 */}
+          <div className="bg-[#FFF8ED] border-2 border-black rounded-[3px] p-3 shadow-[2px_2px_0_#000]">
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-[10px] font-mono font-extrabold bg-[#FF3B30] text-white px-1.5 py-0.5 rounded-[2px]">
+                01. CONTRACT PEAK CHARGES
+              </span>
+            </div>
+            <div className="font-extrabold text-xs mb-1">DISCOM Demand Charge Penalties</div>
+            <p className="text-[11px] text-neutral-700 leading-relaxed font-sans">
+              Indian power distribution companies (DISCOMs) bill university campuses heavy penalties (150%–200% standard rate) whenever import exceeds the sanctioned contract demand (850 kW). CampusMind proactively detects impending peaks 2 hours ahead and negotiates shedding before breaches occur.
+            </p>
+          </div>
+
+          {/* Card 2 */}
+          <div className="bg-[#FFF8ED] border-2 border-black rounded-[3px] p-3 shadow-[2px_2px_0_#000]">
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-[10px] font-mono font-extrabold bg-[#FF7B00] text-black px-1.5 py-0.5 rounded-[2px]">
+                02. TOD TARIFF SPIKES
+              </span>
+            </div>
+            <div className="font-extrabold text-xs mb-1">Time-Of-Day Tariff Arbitrage</div>
+            <p className="text-[11px] text-neutral-700 leading-relaxed font-sans">
+              Electricity during evening peak hours (18:00–22:00) costs ₹9.00/kWh versus ₹5.50/kWh off-peak. Campuses routinely run water borewell pumps during peak hours. CampusMind co-schedules heavy pumping and laundry loads into off-peak or solar-surplus hours, cutting thousands in monthly bills.
+            </p>
+          </div>
+
+          {/* Card 3 */}
+          <div className="bg-[#FFF8ED] border-2 border-black rounded-[3px] p-3 shadow-[2px_2px_0_#000]">
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-[10px] font-mono font-extrabold bg-[#3A86FF] text-white px-1.5 py-0.5 rounded-[2px]">
+                03. UNSEEN WATER LOSSES
+              </span>
+            </div>
+            <div className="font-extrabold text-xs mb-1">Underground Pipe Leak Detection</div>
+            <p className="text-[11px] text-neutral-700 leading-relaxed font-sans">
+              Underground water distribution pipelines frequently burst or develop leaks unnoticed for weeks, wasting 6,000+ litres/hour. The water residual detection algorithm tracks tank mass-balance vs expected occupancy outflow, flagging breaches within 45 minutes and generating valve isolation orders.
+            </p>
+          </div>
+
+          {/* Card 4 */}
+          <div className="bg-[#FFF8ED] border-2 border-black rounded-[3px] p-3 shadow-[2px_2px_0_#000]">
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-[10px] font-mono font-extrabold bg-[#B388FF] text-black px-1.5 py-0.5 rounded-[2px]">
+                04. PHANTOM NIGHT WASTE
+              </span>
+            </div>
+            <div className="font-extrabold text-xs mb-1">Empty Facility Ghost Loads</div>
+            <p className="text-[11px] text-neutral-700 leading-relaxed font-sans">
+              Auditoriums, lecture halls, and laboratories frequently leave high-tonnage AC split units and lighting energized during zero-occupancy night hours (~35 kW continuous waste). IsolationForest ML flags anomalous energy usage and auto-generates targeted BMS shutdown deals.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

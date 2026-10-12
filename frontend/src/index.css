@@ -108,6 +108,21 @@
   box-shadow: 2px 2px 0 #000000 !important;
 }
 
+/* SVG zone hover: visual-only feedback without geometry shift to prevent flicker */
+.neo-zone-hover {
+  transition: filter 120ms ease, opacity 120ms ease;
+  pointer-events: bounding-box;
+}
+.neo-zone-hover:hover {
+  filter: brightness(0.96) contrast(1.05);
+  opacity: 0.92;
+}
+.neo-zone-hover text,
+.neo-zone-hover tspan {
+  pointer-events: none;
+  user-select: none;
+}
+
 .neo-badge {
   border: 2px solid #000000;
   box-shadow: 2px 2px 0 #000000;

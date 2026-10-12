@@ -70,7 +70,7 @@ class NegotiationOrchestrator:
         )
 
         self.add_feed_message(FeedMessage(
-            id=f"msg-{uuid.uuid4().hex[:6]}",
+            id=f"msg-{uuid.uuid4().hex}",
             ts=datetime.now().isoformat(),
             sender="GridAgent",
             recipient="ALL",
@@ -142,7 +142,7 @@ class NegotiationOrchestrator:
             offers.append(offer)
             source_tag = "fallback" if settings.LLM_MODE == "mock" or not settings.GEMINI_API_KEY else "llm"
             self.add_feed_message(FeedMessage(
-                id=f"msg-{uuid.uuid4().hex[:6]}",
+                id=f"msg-{uuid.uuid4().hex}",
                 ts=datetime.now().isoformat(),
                 sender=f"{offer.zone_id.capitalize()}Agent",
                 recipient="GridAgent",
@@ -159,7 +159,7 @@ class NegotiationOrchestrator:
             deficit = required_kw - total_r1_offered
             counter_text = f"Round 1 shortfall: {deficit:.1f} kW unmet. GridAgent requesting secondary concessions from zones with remaining headroom."
             self.add_feed_message(FeedMessage(
-                id=f"msg-{uuid.uuid4().hex[:6]}",
+                id=f"msg-{uuid.uuid4().hex}",
                 ts=datetime.now().isoformat(),
                 sender="GridAgent",
                 recipient="ALL",
@@ -193,7 +193,7 @@ class NegotiationOrchestrator:
             adjustments_text = " All zone constraint bounds and comfort floors satisfied."
 
         self.add_feed_message(FeedMessage(
-            id=f"msg-{uuid.uuid4().hex[:6]}",
+            id=f"msg-{uuid.uuid4().hex}",
             ts=datetime.now().isoformat(),
             sender="Solver (cvxpy)",
             recipient="ALL",
@@ -234,7 +234,7 @@ class NegotiationOrchestrator:
         # 5. Deal message
         approval_manager.add_deal(deal)
         self.add_feed_message(FeedMessage(
-            id=f"msg-{uuid.uuid4().hex[:6]}",
+            id=f"msg-{uuid.uuid4().hex}",
             ts=datetime.now().isoformat(),
             sender="GridAgent",
             recipient="HUMAN",
@@ -251,7 +251,7 @@ class NegotiationOrchestrator:
             adapter.apply_deal(deal_id, deal.allocations, w_start, w_end)
             approval_manager.mark_applied(deal_id)
             self.add_feed_message(FeedMessage(
-                id=f"msg-{uuid.uuid4().hex[:6]}",
+                id=f"msg-{uuid.uuid4().hex}",
                 ts=datetime.now().isoformat(),
                 sender="FacilityManager",
                 recipient="ALL",

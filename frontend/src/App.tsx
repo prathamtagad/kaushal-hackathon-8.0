@@ -9,7 +9,7 @@ import { DealCard } from './components/DealCard';
 import { LedgerPanel } from './components/LedgerPanel';
 import { ChaosPanel } from './components/ChaosPanel';
 import { ForecastTab } from './components/ForecastTab';
-import { AnomaliesTab, AuditTab, BmsOutputTab } from './components/OtherTabs';
+import { AnomaliesTab, AuditTab, BmsOutputTab, WorkflowTab } from './components/OtherTabs';
 import { AssetDetailDrawer } from './components/AssetDetailDrawer';
 import { HeaderSettingsModal } from './components/HeaderSettingsModal';
 import { NeoButton } from './components/ui/NeoButton';
@@ -57,7 +57,7 @@ export const App: React.FC = () => {
   
   // Navigation & Inspector State
   const [activeWorkspaceTab, setActiveWorkspaceTab] = useState<'map' | 'analytics' | 'chaos' | 'inspect'>('map');
-  const [inspectorSubTab, setInspectorSubTab] = useState<'forecast' | 'anomalies' | 'audit' | 'bms'>('forecast');
+  const [inspectorSubTab, setInspectorSubTab] = useState<'forecast' | 'anomalies' | 'audit' | 'bms' | 'workflow'>('forecast');
   const [selectedAsset, setSelectedAsset] = useState<string | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
   const [showConfetti, setShowConfetti] = useState<boolean>(false);
@@ -171,7 +171,16 @@ export const App: React.FC = () => {
         break;
 
       case 'feed_message':
-        setFeedMessages(prev => [...prev, msg.data]);
+        setFeedMessages(prev => {
+          if (!msg.data || !msg.data.id) return prev;
+          if (prev.some(m => m.id === msg.data.id)) return prev;
+          return [...prev, msg.data];
+        });
+        break;
+
+      case 'feed_reset':
+        setFeedMessages([]);
+        setHistory([]);
         break;
 
       case 'deal_update':
@@ -267,6 +276,8 @@ export const App: React.FC = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'reset' })
     });
+    setFeedMessages([]);
+    setHistory([]);
   };
 
   const handleRunDemoScript = () => {
@@ -741,6 +752,18 @@ export const App: React.FC = () => {
                 <Terminal className="w-3.5 h-3.5" />
                 <span>BMS / MQTT OUTBOX</span>
               </button>
+
+              <button
+                onClick={() => setInspectorSubTab('workflow')}
+                className={`px-3 py-1.5 border-2 border-black rounded-[3px] font-bold text-xs uppercase flex items-center space-x-1.5 transition-all ${
+                  inspectorSubTab === 'workflow'
+                    ? 'bg-[#06D6A0] text-black shadow-[2px_2px_0_#000]'
+                    : 'bg-white text-black hover:bg-[#FFF4E0]'
+                }`}
+              >
+                <Layers className="w-3.5 h-3.5" />
+                <span>ARCHITECTURE & WORKFLOW</span>
+              </button>
             </div>
 
             <div>
@@ -748,6 +771,7 @@ export const App: React.FC = () => {
               {inspectorSubTab === 'anomalies' && <AnomaliesTab anomalies={anomalies} />}
               {inspectorSubTab === 'audit' && <AuditTab />}
               {inspectorSubTab === 'bms' && <BmsOutputTab />}
+              {inspectorSubTab === 'workflow' && <WorkflowTab />}
             </div>
           </div>
         )}

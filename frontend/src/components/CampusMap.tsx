@@ -126,7 +126,7 @@ export const CampusMap: React.FC<CampusMapProps> = ({
           {/* Central Grid Hub (Center x=460, y=270, r=44) */}
           <g
             transform="translate(460, 270)"
-            className="cursor-pointer transition-transform hover:scale-105"
+            className="cursor-pointer transition-opacity hover:opacity-90"
             onClick={() => handleAssetClick('grid_hub')}
           >
             <circle cx="5" cy="5" r="44" fill="#000000" />
@@ -158,7 +158,7 @@ export const CampusMap: React.FC<CampusMapProps> = ({
             return (
               <g
                 transform="translate(35, 50)"
-                className={`cursor-pointer transition-transform ${isNegotiating ? 'animate-neo-wiggle' : 'hover:-translate-x-1 hover:-translate-y-1'}`}
+                className={`cursor-pointer ${isNegotiating ? 'animate-neo-wiggle' : 'neo-zone-hover'}`}
                 onClick={() => handleAssetClick('hostel')}
                 onMouseEnter={() => setHoveredZone('hostel')}
                 onMouseLeave={() => setHoveredZone(null)}
@@ -213,7 +213,7 @@ export const CampusMap: React.FC<CampusMapProps> = ({
           {/* SOLAR ARRAY (Top Center: x=360, y=30, w=200, h=85) */}
           <g
             transform="translate(360, 30)"
-            className="cursor-pointer transition-transform hover:-translate-x-1 hover:-translate-y-1"
+            className="cursor-pointer neo-zone-hover"
             onClick={() => handleAssetClick('solar')}
           >
             <rect x="5" y="5" width="200" height="85" rx="4" fill="#000000" />
@@ -237,7 +237,7 @@ export const CampusMap: React.FC<CampusMapProps> = ({
             return (
               <g
                 transform="translate(625, 50)"
-                className={`cursor-pointer transition-transform ${isNegotiating ? 'animate-neo-wiggle' : 'hover:-translate-x-1 hover:-translate-y-1'}`}
+                className={`cursor-pointer ${isNegotiating ? 'animate-neo-wiggle' : 'neo-zone-hover'}`}
                 onClick={() => handleAssetClick('library')}
                 onMouseEnter={() => setHoveredZone('library')}
                 onMouseLeave={() => setHoveredZone(null)}
@@ -297,7 +297,7 @@ export const CampusMap: React.FC<CampusMapProps> = ({
             return (
               <g
                 transform="translate(35, 320)"
-                className={`cursor-pointer transition-transform ${isNegotiating ? 'animate-neo-wiggle' : 'hover:-translate-x-1 hover:-translate-y-1'}`}
+                className={`cursor-pointer ${isNegotiating ? 'animate-neo-wiggle' : 'neo-zone-hover'}`}
                 onClick={() => handleAssetClick('labs')}
                 onMouseEnter={() => setHoveredZone('labs')}
                 onMouseLeave={() => setHoveredZone(null)}
@@ -352,7 +352,7 @@ export const CampusMap: React.FC<CampusMapProps> = ({
           {/* WATER TANK (Bottom Center: x=360, y=380, w=200, h=120) */}
           <g
             transform="translate(360, 380)"
-            className="cursor-pointer transition-transform hover:-translate-x-1 hover:-translate-y-1"
+            className="cursor-pointer neo-zone-hover"
             onClick={() => handleAssetClick('water')}
           >
             <rect x="6" y="6" width="200" height="120" rx="4" fill="#000000" />
@@ -413,7 +413,7 @@ export const CampusMap: React.FC<CampusMapProps> = ({
             return (
               <g
                 transform="translate(625, 320)"
-                className={`cursor-pointer transition-transform ${isNegotiating ? 'animate-neo-wiggle' : 'hover:-translate-x-1 hover:-translate-y-1'}`}
+                className={`cursor-pointer ${isNegotiating ? 'animate-neo-wiggle' : 'neo-zone-hover'}`}
                 onClick={() => handleAssetClick('admin')}
                 onMouseEnter={() => setHoveredZone('admin')}
                 onMouseLeave={() => setHoveredZone(null)}

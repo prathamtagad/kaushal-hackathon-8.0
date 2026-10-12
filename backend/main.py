@@ -81,8 +81,8 @@ ws_manager = ConnectionManager()
 orchestrator = NegotiationOrchestrator(broadcast_callback=ws_manager.broadcast)
 
 def get_full_state_snapshot() -> Dict[str, Any]:
-    b_state = baseline_twin.tick_without_advancing() if baseline_twin.tick_count > 0 else baseline_twin.tick()
-    m_state = managed_twin.tick_without_advancing() if managed_twin.tick_count > 0 else managed_twin.tick()
+    b_state = baseline_twin.tick_without_advancing()
+    m_state = managed_twin.tick_without_advancing()
     
     return {
         "baseline": b_state.model_dump(),
@@ -264,6 +264,11 @@ async def control_sim(req: SimControlRequest):
         managed_twin.reset_sim()
         impact_ledger.reset()
         scenario_manager.trigger_scenario("reset", 0)
+        orchestrator.feed_messages.clear()
+        approval_manager.deals.clear()
+        approval_manager.audit_log.clear()
+        await ws_manager.broadcast({"type": "initial_state", "data": get_full_state_snapshot()})
+        await ws_manager.broadcast({"type": "feed_reset"})
     elif req.action == "jump":
         # Jump to given ISO time
         if req.value:

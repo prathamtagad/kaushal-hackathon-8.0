@@ -9,8 +9,8 @@ FALLBACK_PROFILES = {
         "flexible_share": 0.70,
         "base_weight": 1.2,
         "exam_weight": 2.2,
-        "reason_template": "Hostel throttling non-essential corridor lighting and shifting laundry cycles. Preserving sleeping wing HVAC.",
-        "peer_template": "We've deferred laundry heaters and dimmed corridors. Please protect student study rooms."
+        "reason_template": "Hostel Substation B2: Postponing domestic hot-water heat pump cycles (22 kW) and corridor AHU cooling. Active dormitory room setpoints preserved at 24.2°C (ASHRAE-55 Class B).",
+        "peer_template": "Deferred laundry heaters and common-area lighting. Please protect student dormitory comfort floors."
     },
     "library": {
         "hvac_share": 0.40,
@@ -18,8 +18,8 @@ FALLBACK_PROFILES = {
         "flexible_share": 0.20,
         "base_weight": 1.4,
         "exam_weight": 2.8,
-        "reason_template": "Library dimming secondary book stacks by 30%. Keeping reading hall setpoint under 27C comfort limit.",
-        "peer_template": "Reading halls are at capacity for exams; we gave our lighting headroom."
+        "reason_template": "Library Central AHU-1 & Stack Lighting: Step-dimming secondary stack LED lux by 30% via DALI bus. Reading hall VAV dampers modulated to enforce 26.8°C wet-bulb comfort ceiling.",
+        "peer_template": "Scholars wing reading halls at peak occupancy; contributed maximum lighting and peripheral ventilation headroom."
     },
     "labs": {
         "hvac_share": 0.40,
@@ -27,8 +27,8 @@ FALLBACK_PROFILES = {
         "flexible_share": 0.60,
         "base_weight": 1.0,
         "exam_weight": 1.1,
-        "reason_template": "Labs pausing non-critical workstation charging and queuing batch simulations. Critical servers untouched.",
-        "peer_template": "Non-critical GPU rigs paused for 2h. Server rooms remain locked."
+        "reason_template": "Computing & Research Labs (LP-3): Queuing non-urgent batch GPU jobs; shedding 20% non-critical lab AHU cooling. Tier-3 server room core racks (65 kW) locked and untouched.",
+        "peer_template": "Non-critical workstation charging and test rigs paused for 2h window. Core compute clusters protected."
     },
     "admin": {
         "hvac_share": 0.75,
@@ -36,8 +36,8 @@ FALLBACK_PROFILES = {
         "flexible_share": 0.80,
         "base_weight": 0.7,
         "exam_weight": 0.7,
-        "reason_template": "Admin taking maximum shedding across empty conference rooms and auditorium cooling.",
-        "peer_template": "Offices taking heavy shed to shield hostels and study halls."
+        "reason_template": "Administration Complex & Auditorium: Dispatched 40% chiller staging cut and HVAC setback (+2.5°C) across unoccupied senate chambers and conference suites.",
+        "peer_template": "Administrative offices and auditorium absorbing deep shed to protect academic and residential zones."
     },
     "water": {
         "hvac_share": 0.0,
@@ -45,8 +45,8 @@ FALLBACK_PROFILES = {
         "flexible_share": 0.0,
         "base_weight": 0.9,
         "exam_weight": 1.5,
-        "reason_template": "Overhead reservoir at safe level; postponing borewell pump cycle during high-tariff window.",
-        "peer_template": "Borehole pump offline; 300 kL tank provides 8 hours reserve."
+        "reason_template": "Overhead Balancing Reservoir: Storage level stable at 72.4% (217 kL). Postponing 45 kW Grundfos multistage borehole pump to off-peak TOD window (22:00 IST). 8.2-hour emergency buffer guaranteed.",
+        "peer_template": "Borehole pump offline; 300 kL overhead reservoir provides 8+ hours gravity reserve."
     }
 }
 
@@ -78,12 +78,12 @@ def generate_fallback_offer(
             pump_kw = 45.0
             offered["pump"] = pump_kw
             total_shed = pump_kw
-            reason = "Overhead reservoir at 72%; safely pausing borewell pump for 2 hours."
-            peer_msg = "Pump deferred; providing 45 kW clean relief to campus grid."
+            reason = "Overhead reservoir at 74% (222 kL); safely deferring 45 kW Grundfos pump cycle for 2 hours."
+            peer_msg = "Pump deferred; providing 45 kW clean relief to campus grid feeder."
         else:
             offered["pump"] = 0.0
             total_shed = 0.0
-            reason = "Tank near minimum reserve threshold (30%); pump deferral unsafe."
+            reason = "Reservoir near minimum reserve threshold (30% / 90 kL); continuous pumping required."
             peer_msg = "Reserve floor reached; cannot defer water pumping."
     else:
         # Scale offered shed proportional to required_kw and headroom

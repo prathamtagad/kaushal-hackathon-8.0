@@ -216,7 +216,7 @@ class TwinSim:
 
     def state(self) -> TwinState:
         """Returns the current state snapshot without ticking."""
-        return self.tick() if self.tick_count == 0 else self.tick_without_advancing()
+        return self.tick_without_advancing()
 
     def tick_without_advancing(self) -> TwinState:
         temp_offset = scenario_manager.get_temp_offset()

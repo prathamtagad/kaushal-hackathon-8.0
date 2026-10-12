@@ -68,6 +68,15 @@ export const NegotiationFeed: React.FC<NegotiationFeedProps> = ({
     }
   };
 
+  const formatSourceLabel = (source: string): string => {
+    switch (source) {
+      case 'llm': return 'LLM AGENT';
+      case 'solver': return 'CVXPY SOLVER';
+      case 'fallback': return 'BMS POLICY';
+      default: return 'TELEMETRY';
+    }
+  };
+
   return (
     <NeoCard
       title="AGENT NEGOTIATION STREAM"
@@ -130,7 +139,7 @@ export const NegotiationFeed: React.FC<NegotiationFeedProps> = ({
 
             return (
               <div
-                key={msg.id || index}
+                key={msg.id}
                 className="bg-white border-2 border-black rounded-[4px] shadow-[3px_3px_0_#000] p-2.5 text-xs animate-neo-slide-in relative overflow-hidden"
               >
                 {/* Agent Header */}
@@ -155,7 +164,7 @@ export const NegotiationFeed: React.FC<NegotiationFeedProps> = ({
                       {msg.kind}
                     </NeoBadge>
                     <NeoBadge variant={getSourceBadgeVariant(msg.source)}>
-                      {msg.source}
+                      {formatSourceLabel(msg.source)}
                     </NeoBadge>
                   </div>
                 </div>
