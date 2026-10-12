@@ -4,6 +4,7 @@ import {
   LedgerHistoryPoint, FullStateSnapshot
 } from './types';
 import { CampusMap } from './components/CampusMap';
+import { CampusTimeline } from './components/CampusTimeline';
 import { NegotiationFeed } from './components/NegotiationFeed';
 import { DealCard } from './components/DealCard';
 import { LedgerPanel } from './components/LedgerPanel';
@@ -235,6 +236,22 @@ export const App: React.FC = () => {
     });
   };
 
+  const handleStepForward = () => {
+    fetch('/api/sim/control', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'step' })
+    });
+  };
+
+  const handleStepBackward = () => {
+    fetch('/api/sim/control', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'step_back' })
+    });
+  };
+
   const handleChaosTrigger = (type: string) => {
     fetch('/api/scenario', {
       method: 'POST',
@@ -353,69 +370,12 @@ export const App: React.FC = () => {
             </div>
           </div>
 
-          {/* GROUP 2: Simulation Controls (Clear Primary Action) */}
-          <div className="flex items-center space-x-2 bg-[#FFF8ED] border-2 border-black rounded-[4px] p-1 shadow-[2px_2px_0_#000]">
-            {/* Simulation Clock Pill */}
-            <div className="flex items-center space-x-1.5 bg-black text-[#06D6A0] font-mono font-bold text-xs px-2.5 py-1 rounded-full border border-black">
-              <Clock className="w-3.5 h-3.5 text-[#06D6A0]" />
-              <span>{formatSimTime(clock.sim_time)}</span>
-            </div>
-
-            {/* Primary Action: Play / Pause */}
-            <button
-              onClick={handlePlayPause}
-              className={`px-2.5 py-1 border-2 border-black rounded-[3px] font-bold transition-all text-xs flex items-center space-x-1 select-none ${
-                clock.is_paused
-                  ? 'bg-[#06D6A0] text-black shadow-[2px_2px_0_#000] hover:bg-[#1CE5B1]'
-                  : 'bg-[#FFD60A] text-black shadow-[2px_2px_0_#000] hover:bg-[#FFE047]'
-              }`}
-              title={clock.is_paused ? 'Play simulation' : 'Pause simulation'}
-            >
-              {clock.is_paused ? (
-                <>
-                  <Play className="w-3.5 h-3.5 fill-black" />
-                  <span>PLAY</span>
-                </>
-              ) : (
-                <>
-                  <Pause className="w-3.5 h-3.5 fill-black" />
-                  <span>PAUSE</span>
-                </>
-              )}
-            </button>
-
-            {/* Speed Multipliers */}
-            <div className="hidden sm:flex items-center space-x-0.5 font-mono text-[11px] font-bold">
-              {[1, 2, 4].map((s) => (
-                <button
-                  key={s}
-                  onClick={() => handleSpeedChange(s)}
-                  className={`px-1.5 py-0.5 border border-black rounded-[2px] transition-all ${
-                    clock.speed === s
-                      ? 'bg-[#FF4D8D] text-black font-extrabold shadow-[1px_1px_0_#000]'
-                      : 'bg-white text-black hover:bg-[#FFF4E0]'
-                  }`}
-                >
-                  {s}x
-                </button>
-              ))}
-            </div>
-
-            {/* Jump Buttons */}
-            <div className="hidden lg:flex items-center space-x-1 pl-1.5 border-l border-neutral-300 text-[10px] font-mono font-bold">
-              <button
-                onClick={() => handleJumpTime('2026-10-12T12:00:00')}
-                className="px-1.5 py-0.5 bg-[#FFD60A] border border-black rounded-[2px] hover:shadow-[1px_1px_0_#000]"
-              >
-                NOON
-              </button>
-              <button
-                onClick={() => handleJumpTime('2026-10-12T19:00:00')}
-                className="px-1.5 py-0.5 bg-[#FF7B00] border border-black rounded-[2px] hover:shadow-[1px_1px_0_#000]"
-              >
-                PEAK
-              </button>
-            </div>
+          {/* GROUP 2: Primary Project Badge & Fast Status */}
+          <div className="flex items-center space-x-2 bg-[#FFF8ED] border-2 border-black rounded-[4px] px-3 py-1 shadow-[2px_2px_0_#000]">
+            <div className="w-2.5 h-2.5 rounded-full bg-[#06D6A0] animate-ping mr-1" />
+            <span className="font-mono text-xs font-bold text-black uppercase">
+              DECENTRALIZED MULTI-AGENT ORCHESTRATION
+            </span>
           </div>
 
           {/* GROUP 3: System Status & Primary Demo Action */}
@@ -452,6 +412,23 @@ export const App: React.FC = () => {
 
       {/* Main Workspace Container */}
       <main className="flex-1 p-3 sm:p-5 space-y-4 max-w-[1720px] mx-auto w-full">
+        {/* ======================================================== */}
+        {/* 1. CAMPUS 24-HOUR INTERACTIVE OPERATIONS TIMELINE         */}
+        {/* ======================================================== */}
+        <CampusTimeline
+          simTime={clock.sim_time}
+          isPaused={clock.is_paused}
+          speed={clock.speed}
+          gridImportKw={managed?.grid_import_kw || 0}
+          solarKw={managed?.solar_kw || 0}
+          gridCapKw={config.grid_cap_kw || 850}
+          onPlayPause={handlePlayPause}
+          onSpeedChange={handleSpeedChange}
+          onJumpTime={handleJumpTime}
+          onStepForward={handleStepForward}
+          onStepBackward={handleStepBackward}
+          onReset={handleResetSim}
+        />
         
         {/* ======================================================== */}
         {/* 2. OVERVIEW STRIP: Prominent KPIs + Smart Next Action */}

@@ -27,6 +27,9 @@ export const CampusMap: React.FC<CampusMapProps> = ({
 
   const currentTwin = viewMode === 'managed' ? managedState : baselineState;
   const zones = currentTwin.zones || {};
+  const managedKw = Math.round(managedState.grid_import_kw || 0);
+  const baselineKw = Math.round(baselineState.grid_import_kw || 0);
+  const deltaKw = Math.round(baselineKw - managedKw);
 
   // Zone capacity mapping
   const capacities: Record<string, number> = {
@@ -74,7 +77,7 @@ export const CampusMap: React.FC<CampusMapProps> = ({
             onClick={() => setViewMode('managed')}
             className="text-[10px] px-2.5 py-1"
           >
-            Managed View
+            Managed View {deltaKw > 0 ? `(-${deltaKw}kW)` : ''}
           </NeoButton>
           <NeoButton
             size="sm"
@@ -83,22 +86,42 @@ export const CampusMap: React.FC<CampusMapProps> = ({
             onClick={() => setViewMode('baseline')}
             className="text-[10px] px-2.5 py-1"
           >
-            Baseline View
+            Baseline View {deltaKw > 0 ? `(+${deltaKw}kW)` : ''}
           </NeoButton>
         </div>
       }
       className="h-full"
       bodyClassName="p-3 flex flex-col justify-between"
     >
-      {/* Interactive Helper Banner */}
-      <div className="flex items-center justify-between text-[11px] font-mono bg-[#FFF8ED] border-2 border-black rounded-[3px] px-3 py-1 mb-2">
-        <span className="flex items-center space-x-1.5 text-neutral-700">
-          <MousePointerClick className="w-3.5 h-3.5 text-black" />
-          <span>Click any zone, solar array, or water tank for full engineering telemetry</span>
-        </span>
-        <span className="font-bold text-black uppercase">
-          VIEW: {viewMode === 'managed' ? 'CO-OPTIMISED AGENT STATE' : 'UNMANAGED BASELINE'}
-        </span>
+      {/* Interactive Helper & Live Comparison Banner */}
+      <div className="flex flex-wrap items-center justify-between text-[11px] font-mono bg-[#FFF8ED] border-2 border-black rounded-[3px] px-3 py-1.5 mb-2 gap-2">
+        <div className="flex items-center space-x-2">
+          <span className={`px-2 py-0.5 rounded-[2px] font-extrabold uppercase border border-black ${
+            viewMode === 'managed' ? 'bg-[#06D6A0] text-black' : 'bg-[#FF4D8D] text-black'
+          }`}>
+            {viewMode === 'managed' ? 'CO-OPTIMISED (MANAGED)' : 'UNMANAGED BASELINE'}
+          </span>
+          <span className="text-neutral-700 hidden sm:inline">
+            • Grid Import: <strong className="text-black">{Math.round(currentTwin.grid_import_kw || 0)} kW</strong>
+          </span>
+        </div>
+
+        <div className="flex items-center space-x-2 text-[10px]">
+          {deltaKw > 0 ? (
+            <span className="bg-[#FFD60A] text-black border border-black px-2 py-0.5 rounded-[2px] font-extrabold">
+              ⚡ LIVE SAVINGS: {deltaKw} kW SHED ({Math.round((deltaKw / baselineKw) * 100)}% REDUCTION)
+            </span>
+          ) : (
+            <span className="bg-[#06D6A0] text-black border border-black px-2 py-0.5 rounded-[2px] font-extrabold">
+              ✓ EQUILIBRIUM: SAFELY UNDER 850 kW CAP
+            </span>
+          )}
+          {currentTwin.grid_import_kw > 850 && (
+            <span className="bg-[#FF3B30] text-white border border-black px-2 py-0.5 rounded-[2px] font-extrabold animate-pulse">
+              ⚠️ OVERLOAD: +{Math.round(currentTwin.grid_import_kw - 850)} kW EXCEEDED
+            </span>
+          )}
+        </div>
       </div>
 
       {/* SVG Canvas Area: ViewBox 0 0 920 540 */}
@@ -115,7 +138,7 @@ export const CampusMap: React.FC<CampusMapProps> = ({
 
           {/* Negotiating Inter-Zone Dashed Communication Lines */}
           {isNegotiating && (
-            <g stroke="#000000" strokeWidth="3.5">
+            <g stroke="#FF7B00" strokeWidth="4" className="animate-energy-pulse">
               <line x1="295" y1="130" x2="460" y2="270" className="animate-neo-dash" />
               <line x1="625" y1="130" x2="460" y2="270" className="animate-neo-dash" />
               <line x1="295" y1="400" x2="460" y2="270" className="animate-neo-dash" />
@@ -123,29 +146,48 @@ export const CampusMap: React.FC<CampusMapProps> = ({
             </g>
           )}
 
-          {/* Central Grid Hub (Center x=460, y=270, r=44) */}
+          {/* Central Grid Hub (Center x=460, y=270) */}
           <g
             transform="translate(460, 270)"
-            className="cursor-pointer transition-opacity hover:opacity-90"
+            className="cursor-pointer transition-opacity hover:opacity-90 duration-150"
             onClick={() => handleAssetClick('grid_hub')}
           >
-            <circle cx="5" cy="5" r="44" fill="#000000" />
-            <circle cx="0" cy="0" r="44" fill="#FFFFFF" stroke="#000000" strokeWidth="3" />
+            {isNegotiating && (
+              <>
+                <circle cx="0" cy="0" r="62" fill="none" stroke="#FF7B00" strokeWidth="3" className="animate-ping" opacity="0.4" />
+                <circle cx="0" cy="0" r="58" fill="none" stroke="#FFD60A" strokeWidth="2.5" strokeDasharray="6 4" className="animate-neo-dash" />
+              </>
+            )}
+            {/* Hard drop shadow */}
+            <circle cx="5" cy="5" r="52" fill="#000000" />
+            {/* Outer crisp border */}
+            <circle cx="0" cy="0" r="52" fill="#FFFFFF" stroke="#000000" strokeWidth="3.5" />
+            {/* Inner dynamic fill */}
             <circle
               cx="0"
               cy="0"
-              r="35"
-              fill={viewMode === 'managed' ? '#06D6A0' : '#FF4D8D'}
+              r="44"
+              fill={
+                (currentTwin.grid_import_kw || 0) > 850
+                  ? '#FF3B30'
+                  : viewMode === 'managed'
+                  ? '#06D6A0'
+                  : '#FF4D8D'
+              }
               stroke="#000000"
               strokeWidth="2.5"
             />
-            <text x="0" y="-8" textAnchor="middle" fill="#000000" fontSize="10" fontWeight="800" fontFamily="Space Grotesk">
+            {/* Title */}
+            <text x="0" y="-14" textAnchor="middle" fill="#000000" fontSize="10.5" fontWeight="800" fontFamily="Space Grotesk" letterSpacing="0.05em">
               GRID HUB
             </text>
-            <text x="0" y="14" textAnchor="middle" fill="#000000" fontSize="15" fontWeight="800" fontFamily="Space Mono">
-              {Math.round(currentTwin.grid_import_kw || 0)}kW
+            {/* Live kW Value */}
+            <text x="0" y="7" textAnchor="middle" fill="#000000" fontSize="16" fontWeight="800" fontFamily="Space Mono">
+              {Math.round(currentTwin.grid_import_kw || 0)} <tspan fontSize="11" fontWeight="700">kW</tspan>
             </text>
-            <text x="0" y="27" textAnchor="middle" fill="#000000" fontSize="8" fontWeight="700" fontFamily="Space Mono">
+            {/* High-contrast limit sticker pill */}
+            <rect x="-38" y="16" width="76" height="16" rx="3" fill="#000000" />
+            <text x="0" y="27.5" textAnchor="middle" fill="#FFD60A" fontSize="8.5" fontWeight="700" fontFamily="Space Mono">
               LIMIT: 850kW
             </text>
           </g>
@@ -158,7 +200,7 @@ export const CampusMap: React.FC<CampusMapProps> = ({
             return (
               <g
                 transform="translate(35, 50)"
-                className={`cursor-pointer ${isNegotiating ? 'animate-neo-wiggle' : 'neo-zone-hover'}`}
+                className="cursor-pointer neo-zone-hover transition-all duration-200"
                 onClick={() => handleAssetClick('hostel')}
                 onMouseEnter={() => setHoveredZone('hostel')}
                 onMouseLeave={() => setHoveredZone(null)}
@@ -171,15 +213,15 @@ export const CampusMap: React.FC<CampusMapProps> = ({
                   height="160"
                   rx="4"
                   fill="#FFFFFF"
-                  stroke="#000000"
-                  strokeWidth={isSelected ? '5' : '3'}
+                  stroke={isSelected ? '#3A86FF' : isNegotiating ? '#FF7B00' : '#000000'}
+                  strokeWidth={isSelected ? '5' : isNegotiating ? '4' : '3'}
                 />
                 <rect x="0" y="0" width="260" height="32" rx="3" fill={style.fill} stroke="#000000" strokeWidth="3" />
                 <text x="12" y="21" fill="#000000" fontSize="11" fontWeight="800" fontFamily="Space Grotesk">
                   HOSTELS (BLOCKS A–D)
                 </text>
                 <text x="248" y="21" textAnchor="end" fill="#000000" fontSize="9" fontWeight="700" fontFamily="Space Mono">
-                  [{style.label}]
+                  [{isNegotiating ? 'NEGOTIATING' : style.label}]
                 </text>
 
                 <text x="14" y="70" fill="#000000" fontSize="30" fontWeight="800" fontFamily="Space Mono">
@@ -205,6 +247,7 @@ export const CampusMap: React.FC<CampusMapProps> = ({
                   fill={style.fill}
                   stroke="#000000"
                   strokeWidth="2"
+                  className="transition-all duration-300"
                 />
               </g>
             );
@@ -213,11 +256,20 @@ export const CampusMap: React.FC<CampusMapProps> = ({
           {/* SOLAR ARRAY (Top Center: x=360, y=30, w=200, h=85) */}
           <g
             transform="translate(360, 30)"
-            className="cursor-pointer neo-zone-hover"
+            className="cursor-pointer neo-zone-hover transition-all duration-200"
             onClick={() => handleAssetClick('solar')}
           >
             <rect x="5" y="5" width="200" height="85" rx="4" fill="#000000" />
-            <rect x="0" y="0" width="200" height="85" rx="4" fill="#FFD60A" stroke="#000000" strokeWidth="3" />
+            <rect
+              x="0"
+              y="0"
+              width="200"
+              height="85"
+              rx="4"
+              fill="#FFD60A"
+              stroke={selectedAsset === 'solar' ? '#3A86FF' : '#000000'}
+              strokeWidth={selectedAsset === 'solar' ? '5' : '3'}
+            />
             <path d="M 0 42 L 200 42 M 50 0 L 50 85 M 100 0 L 100 85 M 150 0 L 150 85" stroke="#000000" strokeWidth="2" />
             <rect x="25" y="8" width="150" height="20" fill="#FFFFFF" stroke="#000000" strokeWidth="2" rx="2" />
             <text x="100" y="22" textAnchor="middle" fill="#000000" fontSize="11" fontWeight="800" fontFamily="Space Grotesk">
@@ -237,7 +289,7 @@ export const CampusMap: React.FC<CampusMapProps> = ({
             return (
               <g
                 transform="translate(625, 50)"
-                className={`cursor-pointer ${isNegotiating ? 'animate-neo-wiggle' : 'neo-zone-hover'}`}
+                className="cursor-pointer neo-zone-hover transition-all duration-200"
                 onClick={() => handleAssetClick('library')}
                 onMouseEnter={() => setHoveredZone('library')}
                 onMouseLeave={() => setHoveredZone(null)}
@@ -250,15 +302,15 @@ export const CampusMap: React.FC<CampusMapProps> = ({
                   height="160"
                   rx="4"
                   fill="#FFFFFF"
-                  stroke="#000000"
-                  strokeWidth={isSelected ? '5' : '3'}
+                  stroke={isSelected ? '#3A86FF' : isNegotiating ? '#FF7B00' : '#000000'}
+                  strokeWidth={isSelected ? '5' : isNegotiating ? '4' : '3'}
                 />
                 <rect x="0" y="0" width="260" height="32" rx="3" fill={style.fill} stroke="#000000" strokeWidth="3" />
                 <text x="12" y="21" fill="#000000" fontSize="11" fontWeight="800" fontFamily="Space Grotesk">
                   CENTRAL LIBRARY
                 </text>
                 <text x="248" y="21" textAnchor="end" fill="#000000" fontSize="9" fontWeight="700" fontFamily="Space Mono">
-                  [{style.label}]
+                  [{isNegotiating ? 'NEGOTIATING' : style.label}]
                 </text>
 
                 <text x="14" y="70" fill="#000000" fontSize="30" fontWeight="800" fontFamily="Space Mono">
@@ -284,6 +336,7 @@ export const CampusMap: React.FC<CampusMapProps> = ({
                   fill={style.fill}
                   stroke="#000000"
                   strokeWidth="2"
+                  className="transition-all duration-300"
                 />
               </g>
             );
@@ -297,7 +350,7 @@ export const CampusMap: React.FC<CampusMapProps> = ({
             return (
               <g
                 transform="translate(35, 320)"
-                className={`cursor-pointer ${isNegotiating ? 'animate-neo-wiggle' : 'neo-zone-hover'}`}
+                className="cursor-pointer neo-zone-hover transition-all duration-200"
                 onClick={() => handleAssetClick('labs')}
                 onMouseEnter={() => setHoveredZone('labs')}
                 onMouseLeave={() => setHoveredZone(null)}
@@ -310,15 +363,15 @@ export const CampusMap: React.FC<CampusMapProps> = ({
                   height="160"
                   rx="4"
                   fill="#FFFFFF"
-                  stroke="#000000"
-                  strokeWidth={isSelected ? '5' : '3'}
+                  stroke={isSelected ? '#3A86FF' : isNegotiating ? '#FF7B00' : '#000000'}
+                  strokeWidth={isSelected ? '5' : isNegotiating ? '4' : '3'}
                 />
                 <rect x="0" y="0" width="260" height="32" rx="3" fill={style.fill} stroke="#000000" strokeWidth="3" />
                 <text x="12" y="21" fill="#000000" fontSize="11" fontWeight="800" fontFamily="Space Grotesk">
                   ENGINEERING LABS
                 </text>
                 <text x="248" y="21" textAnchor="end" fill="#000000" fontSize="9" fontWeight="700" fontFamily="Space Mono">
-                  [{style.label}]
+                  [{isNegotiating ? 'NEGOTIATING' : style.label}]
                 </text>
 
                 <text x="14" y="70" fill="#000000" fontSize="30" fontWeight="800" fontFamily="Space Mono">
@@ -344,6 +397,7 @@ export const CampusMap: React.FC<CampusMapProps> = ({
                   fill={style.fill}
                   stroke="#000000"
                   strokeWidth="2"
+                  className="transition-all duration-300"
                 />
               </g>
             );
@@ -352,11 +406,20 @@ export const CampusMap: React.FC<CampusMapProps> = ({
           {/* WATER TANK (Bottom Center: x=360, y=380, w=200, h=120) */}
           <g
             transform="translate(360, 380)"
-            className="cursor-pointer neo-zone-hover"
+            className="cursor-pointer neo-zone-hover transition-all duration-200"
             onClick={() => handleAssetClick('water')}
           >
             <rect x="6" y="6" width="200" height="120" rx="4" fill="#000000" />
-            <rect x="0" y="0" width="200" height="120" rx="4" fill="#FFFFFF" stroke="#000000" strokeWidth="3" />
+            <rect
+              x="0"
+              y="0"
+              width="200"
+              height="120"
+              rx="4"
+              fill="#FFFFFF"
+              stroke={selectedAsset === 'water' ? '#3A86FF' : '#000000'}
+              strokeWidth={selectedAsset === 'water' ? '5' : '3'}
+            />
             <rect x="0" y="0" width="200" height="28" rx="3" fill="#B388FF" stroke="#000000" strokeWidth="3" />
             <text x="100" y="19" textAnchor="middle" fill="#000000" fontSize="11" fontWeight="800" fontFamily="Space Grotesk">
               WATER TANK (300 kL)
@@ -377,7 +440,7 @@ export const CampusMap: React.FC<CampusMapProps> = ({
                     fill="#3A86FF"
                     stroke="#000000"
                     strokeWidth="2"
-                    className="transition-all duration-500"
+                    className="transition-all duration-500 ease-in-out"
                   />
                   <line x1="12" y1={yPos} x2="188" y2={yPos} stroke="#000000" strokeWidth="2.5" />
                 </g>
@@ -413,7 +476,7 @@ export const CampusMap: React.FC<CampusMapProps> = ({
             return (
               <g
                 transform="translate(625, 320)"
-                className={`cursor-pointer ${isNegotiating ? 'animate-neo-wiggle' : 'neo-zone-hover'}`}
+                className="cursor-pointer neo-zone-hover transition-all duration-200"
                 onClick={() => handleAssetClick('admin')}
                 onMouseEnter={() => setHoveredZone('admin')}
                 onMouseLeave={() => setHoveredZone(null)}
@@ -426,15 +489,15 @@ export const CampusMap: React.FC<CampusMapProps> = ({
                   height="160"
                   rx="4"
                   fill="#FFFFFF"
-                  stroke="#000000"
-                  strokeWidth={isSelected ? '5' : '3'}
+                  stroke={isSelected ? '#3A86FF' : isNegotiating ? '#FF7B00' : '#000000'}
+                  strokeWidth={isSelected ? '5' : isNegotiating ? '4' : '3'}
                 />
                 <rect x="0" y="0" width="260" height="32" rx="3" fill={style.fill} stroke="#000000" strokeWidth="3" />
                 <text x="12" y="21" fill="#000000" fontSize="11" fontWeight="800" fontFamily="Space Grotesk">
                   ADMINISTRATION
                 </text>
                 <text x="248" y="21" textAnchor="end" fill="#000000" fontSize="9" fontWeight="700" fontFamily="Space Mono">
-                  [{style.label}]
+                  [{isNegotiating ? 'NEGOTIATING' : style.label}]
                 </text>
 
                 <text x="14" y="70" fill="#000000" fontSize="30" fontWeight="800" fontFamily="Space Mono">
@@ -460,6 +523,7 @@ export const CampusMap: React.FC<CampusMapProps> = ({
                   fill={style.fill}
                   stroke="#000000"
                   strokeWidth="2"
+                  className="transition-all duration-300"
                 />
               </g>
             );

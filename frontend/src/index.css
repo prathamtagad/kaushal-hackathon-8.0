@@ -222,6 +222,24 @@
   animation: neo-pop 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
+@keyframes energy-pulse {
+  0%, 100% { opacity: 0.9; filter: drop-shadow(0 0 2px #FF7B00); }
+  50% { opacity: 1; filter: drop-shadow(0 0 8px #FF7B00); }
+}
+
+.animate-energy-pulse {
+  animation: energy-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes solar-glow {
+  0%, 100% { fill-opacity: 0.25; }
+  50% { fill-opacity: 0.5; }
+}
+
+.animate-solar-glow {
+  animation: solar-glow 2s ease-in-out infinite;
+}
+
 /* Respect prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after {

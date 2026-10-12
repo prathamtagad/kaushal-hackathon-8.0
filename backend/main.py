@@ -269,15 +269,32 @@ async def control_sim(req: SimControlRequest):
         approval_manager.audit_log.clear()
         await ws_manager.broadcast({"type": "initial_state", "data": get_full_state_snapshot()})
         await ws_manager.broadcast({"type": "feed_reset"})
-    elif req.action == "jump":
-        # Jump to given ISO time
+    elif req.action in ("jump", "seek"):
+        # Real jump/seek to given ISO time with immediate physics evaluation
         if req.value:
             try:
                 target = datetime.fromisoformat(req.value)
-                baseline_twin.current_time = target
-                managed_twin.current_time = target
-            except Exception:
+                # Position twins 15 minutes before target so step_simulation advances to target
+                pre_target = target - timedelta(minutes=settings.TICK_MINUTES)
+                new_tick = max(0, int((pre_target - baseline_twin.sim_start).total_seconds() / (settings.TICK_MINUTES * 60)))
+                baseline_twin.current_time = pre_target
+                managed_twin.current_time = pre_target
+                baseline_twin.tick_count = new_tick
+                managed_twin.tick_count = new_tick
+                await step_simulation()
+            except Exception as e:
                 pass
+    elif req.action == "step_back":
+        is_paused = True
+        target = baseline_twin.current_time - timedelta(minutes=settings.TICK_MINUTES)
+        if target >= baseline_twin.sim_start:
+            pre_target = target - timedelta(minutes=settings.TICK_MINUTES)
+            new_tick = max(0, int((pre_target - baseline_twin.sim_start).total_seconds() / (settings.TICK_MINUTES * 60)))
+            baseline_twin.current_time = pre_target
+            managed_twin.current_time = pre_target
+            baseline_twin.tick_count = new_tick
+            managed_twin.tick_count = new_tick
+            await step_simulation()
                 
     await ws_manager.broadcast({"type": "clock_update", "data": {"is_paused": is_paused, "speed": sim_speed}})
     return {"status": "ok", "action": req.action}

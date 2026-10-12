@@ -118,14 +118,20 @@ export const NegotiationFeed: React.FC<NegotiationFeedProps> = ({
               <CheckCircle2 className="w-5 h-5 text-black" />
             </div>
             <div className="font-extrabold text-xs uppercase tracking-tight">AGENT NETWORK IN EQUILIBRIUM</div>
-            <p className="text-[11px] font-mono text-neutral-600 mt-1 max-w-xs leading-normal">
-              Grid import remains within 850 kW limit. 5 zone agents stand ready to negotiate load-shedding if peak strain occurs.
+            <p className="text-[11px] font-mono text-neutral-600 mt-1 max-w-sm leading-normal">
+              Campus is operating normally within the 850 kW limit. When peak strain or an anomaly occurs, 5 autonomous zone agents negotiate load-shedding and solve convex optimization (CVXPY ECOS) with human-in-the-loop approvals.
             </p>
-            <div className="mt-3 flex items-center space-x-2">
+            <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
               {onTriggerDemo && (
                 <NeoButton variant="pink" size="sm" onClick={onTriggerDemo} className="text-[10px] py-1">
                   <Sparkles className="w-3.5 h-3.5 mr-1" />
                   Trigger 3-Min Demo
+                </NeoButton>
+              )}
+              {onTriggerPeak && (
+                <NeoButton variant="yellow" size="sm" onClick={onTriggerPeak} className="text-[10px] py-1">
+                  <AlertTriangle className="w-3.5 h-3.5 mr-1" />
+                  Simulate Peak Deficit (+8°C)
                 </NeoButton>
               )}
             </div>
