@@ -81,18 +81,20 @@ Rather than allowing generative LLMs to directly dispatch actuators to physical 
 
 For each deficit trigger with target shed requirement $R$, the convex optimizer solves:
 
-$$\min_{s_{z,l}} \sum_{z \in \mathcal{Z}} \sum_{l \in \mathcal{L}_z} w_{z,l} \cdot \frac{s_{z,l}^2}{\text{max\_shed}_{z,l}}$$
+$$\min_{s_{z,l}} \sum_{z \in \mathcal{Z}} \sum_{l \in \mathcal{L}_z} w_{z,l} \cdot \frac{s_{z,l}^2}{S^{\max}_{z,l}}$$
 
 $$\text{subject to:}$$
 1. **Demand Deficit Satisfaction:** $\sum_{z,l} s_{z,l} \ge R$
-2. **Physical Headroom Bounds:** $0 \le s_{z,l} \le \text{max\_shed}_{z,l}$
-3. **Hydraulic Continuity:** $\text{Reserve}_{\text{tank}}(t + \Delta t) \ge \text{MinReserve}_{\text{pct}} \times \text{Capacity}_{\text{kl}}$
-4. **Thermal Setpoint Limits:** $T_{\text{zone}} + \Delta T_{\text{offset}} \le T_{\text{comfort\_floor}}$ (e.g. Reading halls $\le 27.0^\circ\text{C}$)
+2. **Physical Headroom Bounds:** $0 \le s_{z,l} \le S^{\max}_{z,l}$
+3. **Hydraulic Continuity:** $V_{\text{tank}}(t + \Delta t) \ge V^{\min}_{\text{reserve}}$
+4. **Thermal Setpoint Limits:** $T_{z} + \Delta T_{z} \le T^{\max}_{z}$ (e.g. Reading halls $\le 27.0^\circ\text{C}$)
 
 Where:
 * $s_{z,l}$ is the power shed allocated to zone $z$ under lever $l \in \{\text{hvac}, \text{lighting}, \text{flexible}, \text{pump}\}$.
-* $w_{z,l} = \text{base\_weight}_{z,l} \times \text{comfort\_multiplier}_z$.
-* When **Exam Week** is active, the Library agent increases its comfort multiplier from $1.4 \to 2.8$, automatically directing the quadratic solver to spread load shedding toward Admin and Hostel non-essential circuits without human reprogramming.
+* $S^{\max}_{z,l}$ is the maximum available physical headroom for zone $z$ under lever $l$.
+* $w_{z,l} = w^{\text{base}}_{z,l} \times c_z$ where $c_z$ is the zone comfort priority weight.
+* $V_{\text{tank}}$ is the water reservoir volume and $T_z$ is the zone indoor air temperature.
+* When **Exam Week** is active, the Library agent increases its comfort multiplier from $c_{\text{library}} = 1.4 \to 2.8$, automatically directing the quadratic solver to spread load shedding toward Admin and Hostel non-essential circuits without human reprogramming.
 
 ---
 
@@ -242,7 +244,7 @@ Broadcasts real-time events:
 * `initial_state`: Sent immediately upon client connection.
 * `tick`: Emitted every 15 simulation minutes with updated telemetry, dynamic grid cap, and ledger summary.
 * `feed_message`: Live streaming negotiation messages.
-* `deal_update`: Deal status transitions (`pending` $\to$ `approved` $\to$ `applied`).
+* `deal_update`: Deal status transitions (`pending` → `approved` → `applied`).
 * `scenario_update`: Active stressor states.
 * `anomaly`: Immediate anomaly alert emissions.
 * `feed_reset`: Resets feed history during simulation restarts.
